@@ -1,0 +1,29 @@
+@model GestionTicketsCombustible.Application.Usuarios.EditarUsuarioDto
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<h1>Editar Usuario</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label class="form-label">Nombre Completo</label>
+        <input asp-for="NombreCompleto" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Correo</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Teléfono</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Rol</label>
+        <select asp-for="Rol" asp-items="ViewBag.Roles" class="form-select"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

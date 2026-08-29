@@ -1,0 +1,34 @@
+@model GestionTicketsCombustible.Application.Usuarios.CrearUsuarioDto
+
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<h1>Nuevo Usuario</h1>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Nombre Completo</label>
+        <input asp-for="NombreCompleto" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Usuario (login)</label>
+        <input asp-for="UserName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Correo</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input asp-for="Password" type="password" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Rol</label>
+        <select asp-for="Rol" asp-items="ViewBag.Roles" class="form-select"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
