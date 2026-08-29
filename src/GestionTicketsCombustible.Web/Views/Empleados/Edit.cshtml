@@ -1,0 +1,41 @@
+@model GestionTicketsCombustible.Application.Empleados.EmpleadoDto
+
+@{
+    ViewData["Title"] = "Editar Empleado";
+}
+
+<h1>Editar Empleado</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label class="form-label">Código Empleado</label>
+        <input asp-for="CodigoEmpleado" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Nombre Completo</label>
+        <input asp-for="NombreCompleto" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Cédula</label>
+        <input asp-for="Cedula" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Departamento</label>
+        <select asp-for="DepartamentoId" asp-items="ViewBag.Departamentos" class="form-select"></select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Cargo</label>
+        <input asp-for="Cargo" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Correo</label>
+        <input asp-for="Correo" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Teléfono Móvil</label>
+        <input asp-for="TelefonoMovil" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

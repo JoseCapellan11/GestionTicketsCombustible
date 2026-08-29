@@ -26,7 +26,7 @@
                     <a asp-action="Edit" asp-route-id="@d.Id" class="btn btn-sm btn-secondary">Editar</a>
                     <form asp-action="CambiarEstado" method="post" style="display:inline">
                         <input type="hidden" name="id" value="@d.Id" />
-                        <input type="hidden" name="activo" value="@(!d.Activo)" />
+                        <input type="hidden" name="activo" value="@((!d.Activo).ToString())" />
                         <button type="submit" class="btn btn-sm @(d.Activo ? "btn-warning" : "btn-success")">
                             @(d.Activo ? "Desactivar" : "Activar")
                         </button>

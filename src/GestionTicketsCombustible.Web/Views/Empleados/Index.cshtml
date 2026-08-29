@@ -1,0 +1,46 @@
+@model List<GestionTicketsCombustible.Application.Empleados.EmpleadoDto>
+
+@{
+    ViewData["Title"] = "Empleados";
+}
+
+<h1>Empleados</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Nuevo Empleado</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Cédula</th>
+            <th>Departamento</th>
+            <th>Cargo</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model)
+        {
+            <tr>
+                <td>@e.CodigoEmpleado</td>
+                <td>@e.NombreCompleto</td>
+                <td>@e.Cedula</td>
+                <td>@e.DepartamentoNombre</td>
+                <td>@e.Cargo</td>
+                <td>@(e.Activo ? "Activo" : "Inactivo")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-sm btn-secondary">Editar</a>
+                    <form asp-action="CambiarEstado" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@e.Id" />
+                        <input type="hidden" name="activo" value="@((!e.Activo).ToString())" />
+                        <button type="submit" class="btn btn-sm @(e.Activo ? "btn-warning" : "btn-success")">
+                            @(e.Activo ? "Desactivar" : "Activar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
