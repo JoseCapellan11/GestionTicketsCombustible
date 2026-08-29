@@ -1,0 +1,44 @@
+@model List<GestionTicketsCombustible.Application.Vehiculos.VehiculoDto>
+
+@{
+    ViewData["Title"] = "Vehiculos";
+}
+
+<h1>Vehículos</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Nuevo Vehículo</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Placa</th>
+            <th>Ficha</th>
+            <th>Marca/Modelo</th>
+            <th>Departamento</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td>@v.Placa</td>
+                <td>@v.Ficha</td>
+                <td>@v.Marca @v.Modelo (@v.Anio)</td>
+                <td>@v.DepartamentoNombre</td>
+                <td>@(v.Activo ? "Activo" : "Inactivo")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@v.Id" class="btn btn-sm btn-secondary">Editar</a>
+                    <form asp-action="CambiarEstado" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@v.Id" />
+                        <input type="hidden" name="activo" value="@((!v.Activo).ToString())" />
+                        <button type="submit" class="btn btn-sm @(v.Activo ? "btn-warning" : "btn-success")">
+                            @(v.Activo ? "Desactivar" : "Activar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using GestionTicketsCombustible.Application.Departamentos;
 using GestionTicketsCombustible.Infrastructure.Persistence.Services;
 using GestionTicketsCombustible.Application.Empleados;
+using GestionTicketsCombustible.Application.Vehiculos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IDepartamentoService, DepartamentoService>();
 builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
+builder.Services.AddScoped<IVehiculoService, VehiculoService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
