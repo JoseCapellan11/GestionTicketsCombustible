@@ -70,4 +70,27 @@ public class UsuariosController : Controller
         await _usuarioService.CambiarEstadoAsync(id, activo);
         return RedirectToAction(nameof(Index));
     }
+
+    public IActionResult ResetPassword(int id)
+    {
+        ViewBag.UsuarioId = id;
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(int id, string nuevaPassword)
+    {
+        var (exito, errores) = await _usuarioService.RestablecerPasswordAsync(id, nuevaPassword);
+        if (!exito)
+        {
+            foreach (var error in errores)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+            ViewBag.UsuarioId = id;
+            return View();
+        }
+        return RedirectToAction(nameof(Index));
+    }
 }

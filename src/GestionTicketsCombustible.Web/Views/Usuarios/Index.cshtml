@@ -30,6 +30,7 @@
                 <td>@(u.Activo ? "Activo" : "Inactivo")</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-secondary">Editar</a>
+                    <a asp-action="ResetPassword" asp-route-id="@u.Id" class="btn btn-sm btn-info">Restablecer Contraseña</a>
                     <form asp-action="CambiarEstado" method="post" style="display:inline">
                         <input type="hidden" name="id" value="@u.Id" />
                         <input type="hidden" name="activo" value="@((!u.Activo).ToString())" />

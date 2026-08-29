@@ -8,4 +8,6 @@ public interface IUsuarioService
     Task ActualizarAsync(EditarUsuarioDto dto);
     Task CambiarEstadoAsync(int id, bool activo);
     Task<List<string>> ObtenerRolesDisponiblesAsync();
+
+    Task<(bool Exito, string[] Errores)> RestablecerPasswordAsync(int id, string nuevaPassword);
 }

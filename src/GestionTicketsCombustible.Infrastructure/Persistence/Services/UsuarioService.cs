@@ -104,4 +104,20 @@ public class UsuarioService : IUsuarioService
     {
         return await _roleManager.Roles.Select(r => r.Name!).ToListAsync();
     }
+
+    public async Task<(bool Exito, string[] Errores)> RestablecerPasswordAsync(int id, string nuevaPassword)
+{
+    var usuario = await _userManager.FindByIdAsync(id.ToString())
+        ?? throw new KeyNotFoundException($"Usuario {id} no encontrado.");
+
+    var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+    var resultado = await _userManager.ResetPasswordAsync(usuario, token, nuevaPassword);
+
+    if (!resultado.Succeeded)
+    {
+        return (false, resultado.Errors.Select(e => e.Description).ToArray());
+    }
+
+    return (true, Array.Empty<string>());
+}
 }
