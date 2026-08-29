@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <ProjectReference Include="..\GestionTicketsCombustible.Application\GestionTicketsCombustible.Application.csproj" />
@@ -9,6 +9,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7cf4b5d0-b0c2-4051-8bb2-97b4c181d9df</UserSecretsId>
   </PropertyGroup>
 
 </Project>
