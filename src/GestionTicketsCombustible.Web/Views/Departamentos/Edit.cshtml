@@ -1,0 +1,18 @@
+@model GestionTicketsCombustible.Application.Departamentos.DepartamentoDto
+
+@{
+    ViewData["Title"] = "Editar Departamento";
+}
+
+<h1>Editar Departamento</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" class="form-control" value="@Model.Nombre" />
+        <span class="text-danger">@ViewData.ModelState["nombre"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

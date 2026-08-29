@@ -2,11 +2,14 @@ using GestionTicketsCombustible.Infrastructure.Identity;
 using GestionTicketsCombustible.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using GestionTicketsCombustible.Application.Departamentos;
+using GestionTicketsCombustible.Infrastructure.Persistence.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IDepartamentoService, DepartamentoService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

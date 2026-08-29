@@ -1,0 +1,38 @@
+@model List<GestionTicketsCombustible.Application.Departamentos.DepartamentoDto>
+
+@{
+    ViewData["Title"] = "Departamentos";
+}
+
+<h1>Departamentos</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Nuevo Departamento</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.Nombre</td>
+                <td>@(d.Activo ? "Activo" : "Inactivo")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@d.Id" class="btn btn-sm btn-secondary">Editar</a>
+                    <form asp-action="CambiarEstado" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@d.Id" />
+                        <input type="hidden" name="activo" value="@(!d.Activo)" />
+                        <button type="submit" class="btn btn-sm @(d.Activo ? "btn-warning" : "btn-success")">
+                            @(d.Activo ? "Desactivar" : "Activar")
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

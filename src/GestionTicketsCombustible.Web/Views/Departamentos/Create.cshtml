@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Nuevo Departamento";
+}
+
+<h1>Nuevo Departamento</h1>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" class="form-control" />
+        <span class="text-danger">@ViewData.ModelState["nombre"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
