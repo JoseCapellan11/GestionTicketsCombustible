@@ -11,6 +11,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     {
     }
 
+    public DbSet<ProgramacionSolicitud> ProgramacionesSolicitud { get; set; }
+
     public DbSet<Departamento> Departamentos => Set<Departamento>();
     public DbSet<Empleado> Empleados => Set<Empleado>();
     public DbSet<Vehiculo> Vehiculos => Set<Vehiculo>();
@@ -20,4 +22,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
+
+    public DbSet<Solicitud> Solicitudes { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<SecuenciaTicket> SecuenciasTicket { get; set; }
 }

@@ -1,0 +1,58 @@
+@model IEnumerable<GestionTicketsCombustible.Application.Programaciones.ProgramacionSolicitudDto>
+
+@{
+    ViewData["Title"] = "Programaciones de Solicitudes";
+}
+
+<h1>Programaciones de Solicitudes Automaticas</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-info">@TempData["Mensaje"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nueva Programacion</a>
+    <form asp-action="GenerarAhora" method="post" style="display:inline">
+        <button type="submit" class="btn btn-warning">Generar Ahora (prueba manual)</button>
+    </form>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Vehiculo</th>
+            <th>Departamento</th>
+            <th>Cantidad</th>
+            <th>Combustible</th>
+            <th>Frecuencia</th>
+            <th>Ultima Generacion</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.EmpleadoNombre</td>
+                <td>@p.VehiculoPlaca</td>
+                <td>@p.DepartamentoNombre</td>
+                <td>@p.CantidadAutorizada</td>
+                <td>@p.TipoCombustible</td>
+                <td>@p.Frecuencia</td>
+                <td>@(p.UltimaGeneracion?.ToString("g") ?? "Nunca")</td>
+                <td>@(p.Activo ? "Activa" : "Inactiva")</td>
+                <td>
+                    @if (p.Activo)
+                    {
+                        <form asp-action="Desactivar" asp-route-id="@p.Id" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Desactivar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

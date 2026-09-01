@@ -4,6 +4,7 @@ using GestionTicketsCombustible.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260901035000_Modulo2_SolicitudesYTickets")]
+    partial class Modulo2_SolicitudesYTickets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,54 +106,6 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                     b.ToTable("Empleados");
                 });
 
-            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.ProgramacionSolicitud", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("CantidadAutorizada")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("DepartamentoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmpleadoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Frecuencia")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TipoCombustible")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("UltimaGeneracion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehiculoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartamentoId");
-
-                    b.HasIndex("EmpleadoId");
-
-                    b.HasIndex("VehiculoId");
-
-                    b.ToTable("ProgramacionesSolicitud");
-                });
-
             modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.SecuenciaTicket", b =>
                 {
                     b.Property<int>("Id")
@@ -212,7 +167,7 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<int?>("UsuarioSolicitanteId")
+                    b.Property<int>("UsuarioSolicitanteId")
                         .HasColumnType("int");
 
                     b.Property<int>("VehiculoId")
@@ -600,33 +555,6 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                     b.Navigation("Departamento");
                 });
 
-            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.ProgramacionSolicitud", b =>
-                {
-                    b.HasOne("GestionTicketsCombustible.Domain.Entities.Departamento", "Departamento")
-                        .WithMany()
-                        .HasForeignKey("DepartamentoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GestionTicketsCombustible.Domain.Entities.Empleado", "Empleado")
-                        .WithMany()
-                        .HasForeignKey("EmpleadoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GestionTicketsCombustible.Domain.Entities.Vehiculo", "Vehiculo")
-                        .WithMany()
-                        .HasForeignKey("VehiculoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Departamento");
-
-                    b.Navigation("Empleado");
-
-                    b.Navigation("Vehiculo");
-                });
-
             modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.Solicitud", b =>
                 {
                     b.HasOne("GestionTicketsCombustible.Domain.Entities.Departamento", "Departamento")
@@ -644,7 +572,8 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                     b.HasOne("GestionTicketsCombustible.Infrastructure.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UsuarioSolicitanteId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("GestionTicketsCombustible.Domain.Entities.Vehiculo", "Vehiculo")
                         .WithMany()

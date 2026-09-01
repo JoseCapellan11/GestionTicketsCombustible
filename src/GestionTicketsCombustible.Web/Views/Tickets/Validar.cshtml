@@ -1,0 +1,31 @@
+@model GestionTicketsCombustible.Application.Tickets.TicketDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Validar Ticket @Model.NumeroTicket</title>
+</head>
+<body style="font-family: sans-serif; max-width: 500px; margin: 40px auto;">
+    <h1>Ticket @Model.NumeroTicket</h1>
+
+    @if (Model.HashValido == true)
+    {
+        <p style="color: green;"><strong>Ticket verificado - autentico</strong></p>
+    }
+    else
+    {
+        <p style="color: red;"><strong>Advertencia: no se pudo verificar la autenticidad de este ticket</strong></p>
+    }
+
+    <p><strong>Empleado:</strong> @Model.EmpleadoNombreSnapshot</p>
+    <p><strong>Vehiculo:</strong> @Model.VehiculoPlacaSnapshot</p>
+    <p><strong>Cantidad autorizada:</strong> @Model.CantidadAutorizada @Model.TipoCombustible</p>
+    <p><strong>Vence:</strong> @Model.FechaVencimiento.ToString("g")</p>
+    <p><strong>Estado:</strong> @Model.EstadoVisual</p>
+
+    <img src="@Url.Action("QrImagenPorToken", new { token = ViewBag.Token })" alt="Codigo QR" style="max-width:250px" />
+</body>
+</html>

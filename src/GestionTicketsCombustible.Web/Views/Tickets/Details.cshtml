@@ -1,0 +1,34 @@
+@model GestionTicketsCombustible.Application.Tickets.TicketDto
+
+@{
+    ViewData["Title"] = "Detalle del Ticket";
+}
+
+<h1>Ticket @Model.NumeroTicket</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Empleado</dt>
+    <dd class="col-sm-9">@Model.EmpleadoNombreSnapshot</dd>
+
+    <dt class="col-sm-3">Vehiculo</dt>
+    <dd class="col-sm-9">@Model.VehiculoPlacaSnapshot</dd>
+
+    <dt class="col-sm-3">Departamento</dt>
+    <dd class="col-sm-9">@Model.DepartamentoNombreSnapshot</dd>
+
+    <dt class="col-sm-3">Cantidad autorizada</dt>
+    <dd class="col-sm-9">@Model.CantidadAutorizada @Model.TipoCombustible</dd>
+
+    <dt class="col-sm-3">Fecha de creacion</dt>
+    <dd class="col-sm-9">@Model.FechaCreacion.ToString("g")</dd>
+
+    <dt class="col-sm-3">Fecha de vencimiento</dt>
+    <dd class="col-sm-9">@Model.FechaVencimiento.ToString("g")</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9"><strong>@Model.EstadoVisual</strong></dd>
+</dl>
+
+<img src="@Url.Action("QrImagen", new { id = Model.Id })" alt="Codigo QR del ticket" style="max-width:250px" />
+
+<p class="mt-3"><a asp-action="Index" class="btn btn-secondary">Volver</a></p>

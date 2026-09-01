@@ -7,4 +7,5 @@ public static class Roles
     public const string Despachador = "Despachador";
     public const string Auditor = "Auditor";
     public const string Consulta = "Consulta";
+    public const string Solicitante = "Solicitante";
 }

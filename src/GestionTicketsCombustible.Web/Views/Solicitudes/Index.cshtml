@@ -1,0 +1,58 @@
+@using GestionTicketsCombustible.Application.Common
+@using GestionTicketsCombustible.Domain.Enums
+@model IEnumerable<GestionTicketsCombustible.Application.Solicitudes.SolicitudDto>
+
+@{
+    ViewData["Title"] = "Solicitudes de Combustible";
+}
+
+<h1>Solicitudes de Combustible</h1>
+
+@if (User.IsInRole(Roles.Solicitante))
+{
+    <p><a asp-action="Create" class="btn btn-primary">Nueva Solicitud</a></p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleado</th>
+            <th>Vehiculo</th>
+            <th>Departamento</th>
+            <th>Cantidad</th>
+            <th>Combustible</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha Solicitud</th>
+            <th>Fecha Vencimiento</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.EmpleadoNombre</td>
+                <td>@s.VehiculoPlaca</td>
+                <td>@s.DepartamentoNombre</td>
+                <td>@s.CantidadAutorizada</td>
+                <td>@s.TipoCombustible</td>
+                <td>@s.TipoSolicitud</td>
+                <td>@s.Estado</td>
+                <td>@s.FechaSolicitud.ToString("g")</td>
+                <td>@s.FechaVencimiento.ToString("g")</td>
+                <td>
+                    @if (s.Estado == EstadoSolicitud.Pendiente && User.IsInRole(Roles.Supervisor))
+                    {
+                        <form asp-action="Aprobar" asp-route-id="@s.Id" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-success btn-sm">Aprobar</button>
+                        </form>
+                        <form asp-action="Rechazar" asp-route-id="@s.Id" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

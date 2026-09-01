@@ -1,0 +1,51 @@
+@using GestionTicketsCombustible.Domain.Enums
+@model GestionTicketsCombustible.Application.Programaciones.CrearProgramacionSolicitudDto
+
+@{
+    ViewData["Title"] = "Nueva Programacion";
+}
+
+<h1>Nueva Programacion de Solicitud</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="EmpleadoId"></label>
+        <select asp-for="EmpleadoId" asp-items="ViewBag.Empleados" class="form-control">
+            <option value="">-- Selecciona --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="VehiculoId"></label>
+        <select asp-for="VehiculoId" asp-items="ViewBag.Vehiculos" class="form-control">
+            <option value="">-- Selecciona --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DepartamentoId"></label>
+        <select asp-for="DepartamentoId" asp-items="ViewBag.Departamentos" class="form-control">
+            <option value="">-- Selecciona --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CantidadAutorizada"></label>
+        <input asp-for="CantidadAutorizada" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TipoCombustible"></label>
+        <input asp-for="TipoCombustible" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Frecuencia"></label>
+        <select asp-for="Frecuencia" asp-items="Html.GetEnumSelectList<FrecuenciaProgramacion>()" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

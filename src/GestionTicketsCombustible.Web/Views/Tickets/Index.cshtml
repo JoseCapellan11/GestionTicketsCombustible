@@ -1,0 +1,49 @@
+@using GestionTicketsCombustible.Application.Common
+@using GestionTicketsCombustible.Domain.Enums
+@model IEnumerable<GestionTicketsCombustible.Application.Tickets.TicketDto>
+
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<h1>Tickets de Combustible</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Numero</th>
+            <th>Empleado</th>
+            <th>Vehiculo</th>
+            <th>Cantidad</th>
+            <th>Combustible</th>
+            <th>Estado</th>
+            <th>Fecha Creacion</th>
+            <th>Fecha Vencimiento</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.NumeroTicket</td>
+                <td>@t.EmpleadoNombreSnapshot</td>
+                <td>@t.VehiculoPlacaSnapshot</td>
+                <td>@t.CantidadAutorizada</td>
+                <td>@t.TipoCombustible</td>
+                <td>@t.EstadoVisual</td>
+                <td>@t.FechaCreacion.ToString("g")</td>
+                <td>@t.FechaVencimiento.ToString("g")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-secondary btn-sm">Ver</a>
+                    @if (t.Estado == EstadoTicket.Creado && User.IsInRole(Roles.Supervisor))
+                    {
+                        <form asp-action="EnviarCorreo" asp-route-id="@t.Id" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-primary btn-sm">Enviar por correo</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -13,7 +13,8 @@ public static class IdentitySeeder
         Roles.Supervisor,
         Roles.Despachador,
         Roles.Auditor,
-        Roles.Consulta
+        Roles.Consulta,
+        Roles.Solicitante
     };
 
     public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
