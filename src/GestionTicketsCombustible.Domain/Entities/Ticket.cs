@@ -12,6 +12,8 @@ public class Ticket
     public int SolicitudId { get; set; }
     public Solicitud Solicitud { get; set; } = null!;
 
+    public Despacho? Despacho { get; set; }
+
     public int EmpleadoId { get; set; }
     public Empleado Empleado { get; set; } = null!;
 

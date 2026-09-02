@@ -12,6 +12,7 @@ using GestionTicketsCombustible.Application.Tickets;
 using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Programaciones;
 using GestionTicketsCombustible.Infrastructure.BackgroundServices;
+using GestionTicketsCombustible.Application.Despachos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,8 @@ builder.Services.Configure<AplicacionOptions>(builder.Configuration.GetSection("
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddScoped<IProgramacionService, ProgramacionService>();
 builder.Services.AddHostedService<GeneradorSolicitudesAutomaticasService>();
+builder.Services.AddScoped<IDespachoService, DespachoService>();
+builder.Services.Configure<AdminSeedOptions>(builder.Configuration.GetSection("AdminInicial"));
 
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -71,6 +74,7 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     await IdentitySeeder.SeedRolesAsync(scope.ServiceProvider);
+    await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider);
 }
 
 app.Run();

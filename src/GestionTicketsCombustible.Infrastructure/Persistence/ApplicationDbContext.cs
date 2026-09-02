@@ -26,4 +26,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Solicitud> Solicitudes { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<SecuenciaTicket> SecuenciasTicket { get; set; }
+    public DbSet<Despacho> Despachos { get; set; }
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion Tickets Combustible - Iniciar Sesion</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0d6efd" />
+    <link rel="stylesheet" href="/css/estilos.css" />
+</head>
+<body>
+    <main class="contenedor-login">
+        <h1>Gestion de Combustible</h1>
+        <h2>Iniciar Sesion</h2>
+        <form id="formulario-login">
+            <label for="nombreUsuario">Usuario</label>
+            <input type="text" id="nombreUsuario" required autocomplete="username" />
+
+            <label for="password">Contrasena</label>
+            <input type="password" id="password" required autocomplete="current-password" />
+
+            <button type="submit">Entrar</button>
+            <p id="mensaje-error" class="mensaje-error"></p>
+        </form>
+    </main>
+
+    <script src="/js/registro-sw.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/login.js"></script>
+</body>
+</html>

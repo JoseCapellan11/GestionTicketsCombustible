@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionTicketsCombustible.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionTicketsCombustible.Api", "src\GestionTicketsCombustible.Api\GestionTicketsCombustible.Api.csproj", "{605659D8-9B5B-4CC4-8D20-5E7EC5660E0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestionTicketsCombustible.Pwa", "src\GestionTicketsCombustible.Pwa\GestionTicketsCombustible.Pwa.csproj", "{C8730382-AE33-4653-A9E2-CA20D1D791A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{605659D8-9B5B-4CC4-8D20-5E7EC5660E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{605659D8-9B5B-4CC4-8D20-5E7EC5660E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{605659D8-9B5B-4CC4-8D20-5E7EC5660E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8730382-AE33-4653-A9E2-CA20D1D791A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8730382-AE33-4653-A9E2-CA20D1D791A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8730382-AE33-4653-A9E2-CA20D1D791A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8730382-AE33-4653-A9E2-CA20D1D791A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{78623BCA-C6CE-4D0E-BD0F-BF4DCB43E2E8} = {AF3C9661-84E1-4AEA-B537-DA6FF2FADCDA}
@@ -51,5 +57,6 @@ Global
 		{29C8B345-9E08-4FA8-A270-7AA46E6EEFB2} = {AF3C9661-84E1-4AEA-B537-DA6FF2FADCDA}
 		{CFD36904-2888-41A8-8567-A0477EA74D94} = {AF3C9661-84E1-4AEA-B537-DA6FF2FADCDA}
 		{605659D8-9B5B-4CC4-8D20-5E7EC5660E0D} = {AF3C9661-84E1-4AEA-B537-DA6FF2FADCDA}
+		{C8730382-AE33-4653-A9E2-CA20D1D791A3} = {AF3C9661-84E1-4AEA-B537-DA6FF2FADCDA}
 	EndGlobalSection
 EndGlobal
