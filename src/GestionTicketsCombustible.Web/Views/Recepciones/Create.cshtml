@@ -1,0 +1,51 @@
+@model GestionTicketsCombustible.Application.Inventario.CrearRecepcionCombustibleDto
+
+@{
+    ViewData["Title"] = "Nueva Recepcion de Combustible";
+}
+
+<h1>Nueva Recepcion de Combustible</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Rnc" class="form-label"></label>
+        <input asp-for="Rnc" class="form-control" />
+        <span asp-validation-for="Rnc" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NombreSuplidor" class="form-label"></label>
+        <input asp-for="NombreSuplidor" class="form-control" />
+        <span asp-validation-for="NombreSuplidor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Factura" class="form-label"></label>
+        <input asp-for="Factura" class="form-control" />
+        <span asp-validation-for="Factura" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="VolumenRecibido" class="form-label"></label>
+        <input asp-for="VolumenRecibido" class="form-control" />
+        <span asp-validation-for="VolumenRecibido" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Fecha" class="form-label"></label>
+        <input asp-for="Fecha" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" type="datetime-local" />
+        <span asp-validation-for="Fecha" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TanqueId" class="form-label">Tanque</label>
+        <select asp-for="TanqueId" asp-items="ViewBag.Tanques" class="form-select">
+            <option value="">-- Selecciona un tanque --</option>
+        </select>
+        <span asp-validation-for="TanqueId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>

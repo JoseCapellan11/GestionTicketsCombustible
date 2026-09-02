@@ -1,0 +1,45 @@
+@model GestionTicketsCombustible.Application.Inventario.CrearAjusteInventarioDto
+
+@{
+    ViewData["Title"] = "Nuevo Ajuste de Inventario";
+}
+
+<h1>Nuevo Ajuste de Inventario</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="TanqueId" class="form-label">Tanque</label>
+        <select asp-for="TanqueId" asp-items="ViewBag.Tanques" class="form-select">
+            <option value="">-- Selecciona un tanque --</option>
+        </select>
+        <span asp-validation-for="TanqueId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Tipo de Ajuste</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" asp-for="EsPositivo" value="true" id="ajustePositivo" />
+            <label class="form-check-label" for="ajustePositivo">Positivo (aumenta la existencia)</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" asp-for="EsPositivo" value="false" id="ajusteNegativo" checked />
+            <label class="form-check-label" for="ajusteNegativo">Negativo (reduce la existencia — incluye mermas)</label>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Volumen" class="form-label"></label>
+        <input asp-for="Volumen" class="form-control" />
+        <span asp-validation-for="Volumen" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Referencia" class="form-label">Justificacion (obligatoria)</label>
+        <textarea asp-for="Referencia" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Referencia" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar Ajuste</button>
+</form>

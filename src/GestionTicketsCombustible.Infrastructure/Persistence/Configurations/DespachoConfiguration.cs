@@ -37,5 +37,10 @@ public class DespachoConfiguration : IEntityTypeConfiguration<Despacho>
             .WithMany()
             .HasForeignKey(d => d.UsuarioDespachadorId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(d => d.Tanque)
+            .WithMany()
+            .HasForeignKey(d => d.TanqueId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -1,0 +1,50 @@
+@model List<GestionTicketsCombustible.Application.Inventario.InventarioResumenDto>
+
+@{
+    ViewData["Title"] = "Inventario en Tiempo Real";
+}
+
+<h1>Inventario en Tiempo Real</h1>
+
+<p><a asp-action="Index" class="btn btn-secondary">Actualizar</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tanque</th>
+            <th>Tipo de Combustible</th>
+            <th>Existencia Actual</th>
+            <th>Disponibilidad</th>
+            <th>Capacidad</th>
+            <th>Nivel Critico</th>
+            <th>Consumo Diario</th>
+            <th>Consumo Mensual</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr class="@(t.EnNivelCritico ? "table-danger" : "")">
+                <td>@t.Nombre</td>
+                <td>@t.TipoCombustible</td>
+                <td>@t.ExistenciaActual.ToString("N2")</td>
+                <td>@t.Disponibilidad.ToString("N2")</td>
+                <td>@t.Capacidad.ToString("N2")</td>
+                <td>@t.NivelCritico.ToString("N2")</td>
+                <td>@t.ConsumoDiario.ToString("N2")</td>
+                <td>@t.ConsumoMensual.ToString("N2")</td>
+                <td>
+                    @if (t.EnNivelCritico)
+                    {
+                        <span class="badge bg-danger">Nivel Critico</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Normal</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

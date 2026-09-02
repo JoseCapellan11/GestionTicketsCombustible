@@ -1,0 +1,45 @@
+@model List<GestionTicketsCombustible.Application.Inventario.TanqueDto>
+
+@{
+    ViewData["Title"] = "Tanques";
+}
+
+<h1>Tanques</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Nuevo Tanque</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Tipo de Combustible</th>
+            <th>Capacidad</th>
+            <th>Existencia Actual</th>
+            <th>Nivel Critico</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.Nombre</td>
+                <td>@t.TipoCombustible</td>
+                <td>@t.Capacidad.ToString("N2")</td>
+                <td>@t.ExistenciaActual.ToString("N2")</td>
+                <td>@t.NivelCritico.ToString("N2")</td>
+                <td>@(t.Activo ? "Activo" : "Inactivo")</td>
+                <td>
+                    @if (t.Activo)
+                    {
+                        <form asp-action="Desactivar" method="post" style="display:inline">
+                            <input type="hidden" name="id" value="@t.Id" />
+                            <button type="submit" class="btn btn-sm btn-warning">Desactivar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

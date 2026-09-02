@@ -1,5 +1,3 @@
-using GestionTicketsCombustible.Domain.Entities;
-
 namespace GestionTicketsCombustible.Domain.Entities;
 
 public class Despacho
@@ -10,6 +8,9 @@ public class Despacho
     public Ticket Ticket { get; set; } = null!;
 
     public int UsuarioDespachadorId { get; set; }
+
+    public int TanqueId { get; set; }
+    public Tanque Tanque { get; set; } = null!;
 
     public DateTime FechaHoraDespacho { get; set; }
 

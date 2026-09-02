@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Despachos;
 using GestionTicketsCombustible.Application.Tickets;
+using GestionTicketsCombustible.Application.Inventario;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,9 @@ builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IDespachoService, DespachoService>();
+builder.Services.AddScoped<ITanqueService, TanqueService>();
+builder.Services.AddScoped<IMovimientoInventarioService, MovimientoInventarioService>();
+builder.Services.AddScoped<IRecepcionService, RecepcionService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -114,14 +118,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseHttpsRedirection();
-
 app.UseCors("PwaPolicy");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();

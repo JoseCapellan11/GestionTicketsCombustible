@@ -1,0 +1,41 @@
+@model GestionTicketsCombustible.Application.Inventario.CrearTransferenciaInventarioDto
+
+@{
+    ViewData["Title"] = "Nueva Transferencia";
+}
+
+<h1>Transferencia entre Tanques</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="TanqueOrigenId" class="form-label">Tanque Origen</label>
+        <select asp-for="TanqueOrigenId" asp-items="ViewBag.TanquesOrigen" class="form-select">
+            <option value="">-- Selecciona el tanque de origen --</option>
+        </select>
+        <span asp-validation-for="TanqueOrigenId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TanqueDestinoId" class="form-label">Tanque Destino</label>
+        <select asp-for="TanqueDestinoId" asp-items="ViewBag.TanquesDestino" class="form-select">
+            <option value="">-- Selecciona el tanque de destino --</option>
+        </select>
+        <span asp-validation-for="TanqueDestinoId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Volumen" class="form-label"></label>
+        <input asp-for="Volumen" class="form-control" />
+        <span asp-validation-for="Volumen" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Referencia" class="form-label">Referencia (opcional)</label>
+        <textarea asp-for="Referencia" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Referencia" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar Transferencia</button>
+</form>

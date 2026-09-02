@@ -1,0 +1,43 @@
+@model List<GestionTicketsCombustible.Application.Inventario.MovimientoInventarioDto>
+
+@{
+    ViewData["Title"] = "Historial de Movimientos";
+}
+
+<h1>Historial de Movimientos de Inventario</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Sub Tipo</th>
+            <th>Tanque</th>
+            <th>Tanque Destino</th>
+            <th>Volumen</th>
+            <th>Referencia</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            var claseTipo = m.TipoMovimiento switch
+            {
+                "Entrada" => "badge bg-success",
+                "Salida" => "badge bg-danger",
+                "Ajuste" => "badge bg-warning text-dark",
+                "Transferencia" => "badge bg-info text-dark",
+                _ => "badge bg-secondary"
+            };
+            <tr>
+                <td>@m.FechaMovimiento.ToString("dd/MM/yyyy HH:mm")</td>
+                <td><span class="@claseTipo">@m.TipoMovimiento</span></td>
+                <td>@(m.SubTipo ?? "-")</td>
+                <td>@m.TanqueNombre</td>
+                <td>@(m.TanqueDestinoNombre ?? "-")</td>
+                <td>@m.Volumen.ToString("N2")</td>
+                <td>@(m.Referencia ?? "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>

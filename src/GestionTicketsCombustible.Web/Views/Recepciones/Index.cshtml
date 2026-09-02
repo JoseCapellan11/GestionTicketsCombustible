@@ -1,0 +1,35 @@
+@model List<GestionTicketsCombustible.Application.Inventario.RecepcionCombustibleDto>
+
+@{
+    ViewData["Title"] = "Recepciones de Combustible";
+}
+
+<h1>Recepciones de Combustible</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">Nueva Recepcion</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>RNC</th>
+            <th>Suplidor</th>
+            <th>Factura</th>
+            <th>Volumen Recibido</th>
+            <th>Tanque</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@r.Rnc</td>
+                <td>@r.NombreSuplidor</td>
+                <td>@r.Factura</td>
+                <td>@r.VolumenRecibido.ToString("N2")</td>
+                <td>@r.TanqueNombre</td>
+            </tr>
+        }
+    </tbody>
+</table>

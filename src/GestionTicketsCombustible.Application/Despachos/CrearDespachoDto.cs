@@ -8,6 +8,10 @@ public class CrearDespachoDto
     public string TokenTicket { get; set; } = string.Empty;
 
     [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un tanque valido.")]
+    public int TanqueId { get; set; }
+
+    [Required]
     [Range(0.01, 10000, ErrorMessage = "Los galones deben ser un valor positivo.")]
     public decimal GalonesDespachados { get; set; }
 

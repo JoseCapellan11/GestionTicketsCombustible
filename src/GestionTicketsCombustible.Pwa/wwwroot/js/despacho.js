@@ -1,5 +1,6 @@
 let ticketActual = null;
 let lectorQr = null;
+let tanquesDisponibles = [];
 
 document.getElementById("boton-cerrar-sesion").addEventListener("click", () => {
   cerrarSesion();
@@ -17,6 +18,43 @@ document.getElementById("formulario-despacho").addEventListener("submit", async 
   evento.preventDefault();
   await registrarDespacho();
 });
+
+cargarTanques();
+
+async function cargarTanques() {
+  try {
+    const respuesta = await llamarApi("/api/Tanques");
+
+    if (!respuesta.ok) {
+      tanquesDisponibles = [];
+      return;
+    }
+
+    tanquesDisponibles = await respuesta.json();
+  } catch (error) {
+    tanquesDisponibles = [];
+  }
+}
+
+function poblarSelectorTanques() {
+  const selectorTanque = document.getElementById("tanque");
+  selectorTanque.innerHTML = "";
+
+  if (tanquesDisponibles.length === 0) {
+    const opcion = document.createElement("option");
+    opcion.textContent = "No hay tanques disponibles";
+    opcion.value = "";
+    selectorTanque.appendChild(opcion);
+    return;
+  }
+
+  tanquesDisponibles.forEach((tanque) => {
+    const opcion = document.createElement("option");
+    opcion.value = tanque.id;
+    opcion.textContent = `${tanque.nombre} (${tanque.existenciaActual} gal. disponibles)`;
+    selectorTanque.appendChild(opcion);
+  });
+}
 
 function iniciarEscaneo() {
   document.getElementById("boton-escanear").hidden = true;
@@ -88,6 +126,12 @@ async function validarTicket(token) {
       return;
     }
 
+    if (tanquesDisponibles.length === 0) {
+      await cargarTanques();
+    }
+
+    poblarSelectorTanques();
+
     document.getElementById("galones").max = ticket.cantidadAutorizada;
     document.getElementById("galones").value = ticket.cantidadAutorizada;
     formulario.hidden = false;
@@ -103,6 +147,7 @@ async function registrarDespacho() {
 
   const cuerpo = {
     tokenTicket: ticketActual.token,
+    tanqueId: parseInt(document.getElementById("tanque").value, 10),
     galonesDespachados: parseFloat(document.getElementById("galones").value),
     estacion: document.getElementById("estacion").value,
     observaciones: document.getElementById("observaciones").value || null
@@ -125,6 +170,7 @@ async function registrarDespacho() {
     mensajeResultado.className = "mensaje-exito";
     document.getElementById("formulario-despacho").hidden = true;
     document.getElementById("boton-escanear-otro").hidden = false;
+    await cargarTanques();
   } catch (error) {
     mensajeResultado.textContent = "No se pudo registrar el despacho.";
     mensajeResultado.className = "mensaje-error";

@@ -1,0 +1,37 @@
+@model GestionTicketsCombustible.Application.Inventario.CrearTanqueDto
+
+@{
+    ViewData["Title"] = "Nuevo Tanque";
+}
+
+<h1>Nuevo Tanque</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TipoCombustible" class="form-label"></label>
+        <input asp-for="TipoCombustible" class="form-control" />
+        <span asp-validation-for="TipoCombustible" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Capacidad" class="form-label"></label>
+        <input asp-for="Capacidad" class="form-control" />
+        <span asp-validation-for="Capacidad" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NivelCritico" class="form-label"></label>
+        <input asp-for="NivelCritico" class="form-control" />
+        <span asp-validation-for="NivelCritico" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>

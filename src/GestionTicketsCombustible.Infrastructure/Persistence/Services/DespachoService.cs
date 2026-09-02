@@ -1,4 +1,5 @@
 using GestionTicketsCombustible.Application.Despachos;
+using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Application.Tickets;
 using GestionTicketsCombustible.Domain.Entities;
 using GestionTicketsCombustible.Domain.Enums;
@@ -10,11 +11,16 @@ public class DespachoService : IDespachoService
 {
     private readonly ApplicationDbContext _context;
     private readonly ITicketSeguridadService _seguridadService;
+    private readonly IMovimientoInventarioService _movimientoService;
 
-    public DespachoService(ApplicationDbContext context, ITicketSeguridadService seguridadService)
+    public DespachoService(
+        ApplicationDbContext context,
+        ITicketSeguridadService seguridadService,
+        IMovimientoInventarioService movimientoService)
     {
         _context = context;
         _seguridadService = seguridadService;
+        _movimientoService = movimientoService;
     }
 
     public async Task<int> RegistrarAsync(CrearDespachoDto dto, int usuarioDespachadorId)
@@ -50,10 +56,20 @@ public class DespachoService : IDespachoService
             throw new InvalidOperationException(
                 $"Los galones despachados no pueden exceder la cantidad autorizada ({ticket.CantidadAutorizada}).");
 
+        var tanque = await _context.Tanques.FirstOrDefaultAsync(t => t.Id == dto.TanqueId)
+            ?? throw new InvalidOperationException("El tanque indicado no existe.");
+
+        if (!tanque.Activo)
+            throw new InvalidOperationException("El tanque indicado no esta activo.");
+
+        if (tanque.ExistenciaActual < dto.GalonesDespachados)
+            throw new InvalidOperationException("El tanque no tiene existencia suficiente para este despacho.");
+
         var despacho = new Despacho
         {
             TicketId = ticket.Id,
             UsuarioDespachadorId = usuarioDespachadorId,
+            TanqueId = dto.TanqueId,
             FechaHoraDespacho = DateTime.Now,
             GalonesDespachados = dto.GalonesDespachados,
             Estacion = dto.Estacion,
@@ -65,6 +81,13 @@ public class DespachoService : IDespachoService
 
         await _context.SaveChangesAsync();
 
+        await _movimientoService.RegistrarSalidaAsync(
+            dto.TanqueId,
+            dto.GalonesDespachados,
+            SubTipoMovimientoInventario.Despacho,
+            $"Despacho #{despacho.Id} - Ticket {ticket.NumeroTicket}",
+            despacho.Id);
+
         return despacho.Id;
     }
 
@@ -72,6 +95,7 @@ public class DespachoService : IDespachoService
     {
         var despacho = await _context.Despachos
             .Include(d => d.Ticket)
+            .Include(d => d.Tanque)
             .FirstOrDefaultAsync(d => d.Id == id);
 
         return despacho is null ? null : await MapToDtoAsync(despacho);
@@ -81,6 +105,7 @@ public class DespachoService : IDespachoService
     {
         var despachos = await _context.Despachos
             .Include(d => d.Ticket)
+            .Include(d => d.Tanque)
             .OrderByDescending(d => d.FechaHoraDespacho)
             .ToListAsync();
 
@@ -104,6 +129,8 @@ public class DespachoService : IDespachoService
             VehiculoPlacaSnapshot = d.Ticket.VehiculoPlacaSnapshot,
             UsuarioDespachadorId = d.UsuarioDespachadorId,
             NombreDespachador = despachador?.UserName ?? "(desconocido)",
+            TanqueId = d.TanqueId,
+            NombreTanque = d.Tanque?.Nombre ?? "(desconocido)",
             FechaHoraDespacho = d.FechaHoraDespacho,
             GalonesDespachados = d.GalonesDespachados,
             Estacion = d.Estacion,

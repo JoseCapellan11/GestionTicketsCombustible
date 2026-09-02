@@ -13,6 +13,7 @@ using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Programaciones;
 using GestionTicketsCombustible.Infrastructure.BackgroundServices;
 using GestionTicketsCombustible.Application.Despachos;
+using GestionTicketsCombustible.Application.Inventario;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,9 @@ builder.Services.AddScoped<IProgramacionService, ProgramacionService>();
 builder.Services.AddHostedService<GeneradorSolicitudesAutomaticasService>();
 builder.Services.AddScoped<IDespachoService, DespachoService>();
 builder.Services.Configure<AdminSeedOptions>(builder.Configuration.GetSection("AdminInicial"));
+builder.Services.AddScoped<ITanqueService, TanqueService>();
+builder.Services.AddScoped<IMovimientoInventarioService, MovimientoInventarioService>();
+builder.Services.AddScoped<IRecepcionService, RecepcionService>();
 
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
