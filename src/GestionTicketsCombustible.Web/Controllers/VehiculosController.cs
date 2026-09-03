@@ -1,11 +1,14 @@
 using System.Security.Claims;
+using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Departamentos;
 using GestionTicketsCombustible.Application.Vehiculos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestionTicketsCombustible.Web.Controllers;
 
+[Authorize(Roles = $"{Roles.Administrador},{Roles.Supervisor}")]
 public class VehiculosController : Controller
 {
     private readonly IVehiculoService _vehiculoService;

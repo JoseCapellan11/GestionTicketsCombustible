@@ -19,6 +19,8 @@ using GestionTicketsCombustible.Application.CierresDiarios;
 using QuestPDF.Infrastructure;
 using GestionTicketsCombustible.Application.Reportes;
 using GestionTicketsCombustible.Application.Dashboard;
+using GestionTicketsCombustible.Application.Notificaciones;
+using GestionTicketsCombustible.Web.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +50,9 @@ builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
 builder.Services.AddScoped<ICierreDiarioService, CierreDiarioService>();
 builder.Services.AddScoped<IReporteService, ReporteService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
+builder.Services.Configure<NotificacionesOptions>(builder.Configuration.GetSection("Notificaciones"));
+builder.Services.AddHostedService<AlertasBackgroundService>();
 
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -64,6 +69,13 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+});
 
 var app = builder.Build();
 

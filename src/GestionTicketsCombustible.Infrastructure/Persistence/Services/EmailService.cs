@@ -1,4 +1,6 @@
+using GestionTicketsCombustible.Application.Notificaciones;
 using GestionTicketsCombustible.Application.Tickets;
+using GestionTicketsCombustible.Domain.Enums;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -9,10 +11,12 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Services;
 public class EmailService : IEmailService
 {
     private readonly SmtpOptions _opciones;
+    private readonly INotificacionService _notificacionService;
 
-    public EmailService(IOptions<SmtpOptions> opciones)
+    public EmailService(IOptions<SmtpOptions> opciones, INotificacionService notificacionService)
     {
         _opciones = opciones.Value;
+        _notificacionService = notificacionService;
     }
 
     public async Task EnviarTicketAsync(TicketDto ticket, string correoDestino, byte[] qrPng, string urlValidacion)
@@ -40,11 +44,23 @@ public class EmailService : IEmailService
         cuerpo.LinkedResources.Add("qr-ticket.png", qrPng).ContentId = "qrticket";
         mensaje.Body = cuerpo.ToMessageBody();
 
-        using var cliente = new SmtpClient();
-        await cliente.ConnectAsync(_opciones.Host, _opciones.Puerto,
-            _opciones.UsarSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
-        await cliente.AuthenticateAsync(_opciones.Usuario, _opciones.Password);
-        await cliente.SendAsync(mensaje);
-        await cliente.DisconnectAsync(true);
+        try
+        {
+            using var cliente = new SmtpClient();
+            await cliente.ConnectAsync(_opciones.Host, _opciones.Puerto,
+                _opciones.UsarSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
+            await cliente.AuthenticateAsync(_opciones.Usuario, _opciones.Password);
+            await cliente.SendAsync(mensaje);
+            await cliente.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            await _notificacionService.CrearAsync(
+                TipoNotificacion.FalloIntegracion,
+                $"Fallo al enviar el correo del ticket '{ticket.NumeroTicket}' a '{correoDestino}': {ex.Message}",
+                "Ticket", ticket.Id);
+
+            throw;
+        }
     }
 }

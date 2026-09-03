@@ -1,5 +1,6 @@
 using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Inventario;
+using GestionTicketsCombustible.Application.Notificaciones;
 using GestionTicketsCombustible.Domain.Entities;
 using GestionTicketsCombustible.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,14 @@ public class MovimientoInventarioService : IMovimientoInventarioService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuditoriaService _auditoriaService;
+    private readonly INotificacionService _notificacionService;
 
-    public MovimientoInventarioService(ApplicationDbContext context, IAuditoriaService auditoriaService)
+    public MovimientoInventarioService(ApplicationDbContext context, IAuditoriaService auditoriaService,
+        INotificacionService notificacionService)
     {
         _context = context;
         _auditoriaService = auditoriaService;
+        _notificacionService = notificacionService;
     }
 
     public async Task<IEnumerable<MovimientoInventarioDto>> ObtenerHistorialAsync()
@@ -62,6 +66,11 @@ public class MovimientoInventarioService : IMovimientoInventarioService
             "MovimientoInventario", movimientoId,
             $"Ajuste {(dto.EsPositivo ? "positivo" : "negativo")} de {dto.Volumen} galones en tanque #{dto.TanqueId}: {dto.Referencia}",
             direccionIp);
+
+        await _notificacionService.CrearAsync(
+            TipoNotificacion.AjusteInventario,
+            $"Ajuste {(dto.EsPositivo ? "positivo" : "negativo")} de {dto.Volumen} galones en el tanque #{dto.TanqueId} realizado por '{nombreUsuario}': {dto.Referencia}",
+            "MovimientoInventario", movimientoId);
     }
 
     public async Task RegistrarTransferenciaAsync(CrearTransferenciaInventarioDto dto, int usuarioId, string nombreUsuario, string direccionIp)

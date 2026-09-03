@@ -1,10 +1,13 @@
 using System.Security.Claims;
+using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Usuarios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GestionTicketsCombustible.Web.Controllers;
 
+[Authorize(Roles = Roles.Administrador)]
 public class UsuariosController : Controller
 {
     private readonly IUsuarioService _usuarioService;

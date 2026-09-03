@@ -33,4 +33,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<AuditoriaLog> AuditoriaLogs { get; set; }
     public DbSet<CierreDiario> CierresDiarios { get; set; }
     public DbSet<CierreDiarioDetalle> CierreDiarioDetalles { get; set; }
+    public DbSet<Notificacion> Notificaciones { get; set; }
 }
