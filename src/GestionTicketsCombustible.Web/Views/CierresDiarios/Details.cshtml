@@ -1,0 +1,59 @@
+@model GestionTicketsCombustible.Application.CierresDiarios.CierreDiarioDto
+
+@{
+    ViewData["Title"] = "Detalle de Cierre Diario";
+}
+
+<h1>Cierre Diario — @Model.Fecha.ToString("d")</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Cerrado por</dt>
+    <dd class="col-sm-9">@Model.UsuarioCierreNombreSnapshot</dd>
+
+    <dt class="col-sm-3">Fecha/Hora de cierre</dt>
+    <dd class="col-sm-9">@Model.FechaHoraCierre.ToString("g")</dd>
+
+    <dt class="col-sm-3">Total despachado</dt>
+    <dd class="col-sm-9">@Model.TotalDespachadoDia.ToString("N2")</dd>
+
+    <dt class="col-sm-3">Total recibido</dt>
+    <dd class="col-sm-9">@Model.TotalRecibidoDia.ToString("N2")</dd>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Observaciones))
+    {
+        <dt class="col-sm-3">Observaciones</dt>
+        <dd class="col-sm-9">@Model.Observaciones</dd>
+    }
+</dl>
+
+<h4>Detalle por tanque</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tanque</th>
+            <th>Existencia teorica</th>
+            <th>Existencia fisica</th>
+            <th>Diferencia</th>
+            <th>Despachado</th>
+            <th>Recibido</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model.Detalles)
+        {
+            <tr class="@(d.Diferencia != 0 ? "table-warning" : "")">
+                <td>@d.TanqueNombre</td>
+                <td>@d.ExistenciaTeorica.ToString("N2")</td>
+                <td>@d.ExistenciaFisica.ToString("N2")</td>
+                <td><strong>@d.Diferencia.ToString("N2")</strong></td>
+                <td>@d.DespachadoDia.ToString("N2")</td>
+                <td>@d.RecibidoDia.ToString("N2")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p class="mt-3">
+    <a asp-action="DescargarActaPdf" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Descargar Acta PDF</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+</p>

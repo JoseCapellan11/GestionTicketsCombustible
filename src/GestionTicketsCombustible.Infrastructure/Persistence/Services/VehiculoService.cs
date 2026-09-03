@@ -1,5 +1,7 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Vehiculos;
 using GestionTicketsCombustible.Domain.Entities;
+using GestionTicketsCombustible.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionTicketsCombustible.Infrastructure.Persistence.Services;
@@ -7,10 +9,12 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Services;
 public class VehiculoService : IVehiculoService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public VehiculoService(ApplicationDbContext context)
+    public VehiculoService(ApplicationDbContext context, IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<List<VehiculoDto>> ObtenerTodosAsync()
@@ -56,7 +60,7 @@ public class VehiculoService : IVehiculoService
         };
     }
 
-    public async Task<int> CrearAsync(VehiculoDto dto)
+    public async Task<int> CrearAsync(VehiculoDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var vehiculo = new Vehiculo
         {
@@ -73,10 +77,17 @@ public class VehiculoService : IVehiculoService
         };
         _context.Vehiculos.Add(vehiculo);
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Creacion,
+            "Vehiculo", vehiculo.Id,
+            $"Creacion del vehiculo placa '{vehiculo.Placa}' (ficha {vehiculo.Ficha})",
+            direccionIp);
+
         return vehiculo.Id;
     }
 
-    public async Task ActualizarAsync(VehiculoDto dto)
+    public async Task ActualizarAsync(VehiculoDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var vehiculo = await _context.Vehiculos.FindAsync(dto.Id)
             ?? throw new KeyNotFoundException($"Vehiculo {dto.Id} no encontrado.");
@@ -90,13 +101,25 @@ public class VehiculoService : IVehiculoService
         vehiculo.CapacidadTanque = dto.CapacidadTanque;
         vehiculo.Kilometraje = dto.Kilometraje;
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Vehiculo", vehiculo.Id,
+            $"Actualizacion de datos del vehiculo placa '{vehiculo.Placa}'",
+            direccionIp);
     }
 
-    public async Task CambiarEstadoAsync(int id, bool activo)
+    public async Task CambiarEstadoAsync(int id, bool activo, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var vehiculo = await _context.Vehiculos.FindAsync(id)
             ?? throw new KeyNotFoundException($"Vehiculo {id} no encontrado.");
         vehiculo.Activo = activo;
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Vehiculo", vehiculo.Id,
+            $"Vehiculo placa '{vehiculo.Placa}' {(activo ? "activado" : "desactivado")}",
+            direccionIp);
     }
 }

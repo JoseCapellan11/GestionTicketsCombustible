@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Tickets;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,13 @@ public class TicketsController : Controller
         return File(png, "image/png");
     }
 
+    public async Task<IActionResult> DescargarPdf(int id)
+    {
+        var pdf = await _ticketService.GenerarPdfAsync(id);
+        if (pdf is null) return NotFound();
+        return File(pdf, "application/pdf", $"Ticket-{id}.pdf");
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.Supervisor)]
@@ -42,6 +50,24 @@ public class TicketsController : Controller
     {
         await _ticketService.EnviarPorCorreoAsync(id);
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = $"{Roles.Administrador},{Roles.Supervisor}")]
+    public async Task<IActionResult> Anular(int id, string motivo)
+    {
+        if (string.IsNullOrWhiteSpace(motivo))
+        {
+            TempData["Error"] = "Debes indicar un motivo para anular el ticket.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _ticketService.AnularAsync(id, motivo, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [AllowAnonymous]

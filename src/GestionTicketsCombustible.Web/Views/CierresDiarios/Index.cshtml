@@ -1,0 +1,43 @@
+@model IEnumerable<GestionTicketsCombustible.Application.CierresDiarios.CierreDiarioDto>
+
+@{
+    ViewData["Title"] = "Cierres Diarios";
+}
+
+<h1>Cierres Diarios</h1>
+
+@if (TempData["Info"] is string info)
+{
+    <div class="alert alert-info">@info</div>
+}
+
+@if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
+{
+    <p><a asp-action="Preparar" class="btn btn-primary">Generar Cierre de Hoy</a></p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Cerrado por</th>
+            <th>Fecha/Hora de cierre</th>
+            <th>Total despachado</th>
+            <th>Total recibido</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Fecha.ToString("d")</td>
+                <td>@c.UsuarioCierreNombreSnapshot</td>
+                <td>@c.FechaHoraCierre.ToString("g")</td>
+                <td>@c.TotalDespachadoDia.ToString("N2")</td>
+                <td>@c.TotalRecibidoDia.ToString("N2")</td>
+                <td><a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Ver detalle</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

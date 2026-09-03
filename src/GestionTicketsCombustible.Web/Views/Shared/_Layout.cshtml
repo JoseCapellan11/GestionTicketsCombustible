@@ -46,6 +46,24 @@
                                 <a class="nav-link text-dark" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
                             </li>
                         }
+                        @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor") || User.IsInRole("Auditor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="CierresDiarios" asp-action="Index">Cierres Diarios</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Reportes" asp-action="Index">Reportes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Administrador") || User.IsInRole("Auditor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auditoria" asp-action="Index">Auditoria</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         @if (User.Identity?.IsAuthenticated == true)

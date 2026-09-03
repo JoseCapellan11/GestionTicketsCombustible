@@ -1,3 +1,4 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Domain.Entities;
 using GestionTicketsCombustible.Domain.Enums;
@@ -8,10 +9,12 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Services;
 public class TanqueService : ITanqueService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public TanqueService(ApplicationDbContext context)
+    public TanqueService(ApplicationDbContext context, IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IEnumerable<TanqueDto>> ObtenerTodosAsync()
@@ -26,7 +29,7 @@ public class TanqueService : ITanqueService
         return tanque is null ? null : MapToDto(tanque);
     }
 
-    public async Task<int> CrearAsync(CrearTanqueDto dto)
+    public async Task<int> CrearAsync(CrearTanqueDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var tanque = new Tanque
         {
@@ -41,16 +44,28 @@ public class TanqueService : ITanqueService
         _context.Tanques.Add(tanque);
         await _context.SaveChangesAsync();
 
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Creacion,
+            "Tanque", tanque.Id,
+            $"Creacion del tanque '{tanque.Nombre}' (capacidad {tanque.Capacidad} galones)",
+            direccionIp);
+
         return tanque.Id;
     }
 
-    public async Task DesactivarAsync(int id)
+    public async Task DesactivarAsync(int id, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var tanque = await _context.Tanques.FirstOrDefaultAsync(t => t.Id == id)
             ?? throw new InvalidOperationException("El tanque no existe.");
 
         tanque.Activo = false;
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Tanque", tanque.Id,
+            $"Tanque '{tanque.Nombre}' desactivado",
+            direccionIp);
     }
 
     public async Task<IEnumerable<InventarioResumenDto>> ObtenerResumenInventarioAsync()

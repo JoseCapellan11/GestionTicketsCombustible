@@ -1,10 +1,18 @@
+@using GestionTicketsCombustible.Domain.Enums
 @model GestionTicketsCombustible.Application.Tickets.TicketDto
 
 @{
     ViewData["Title"] = "Detalle del Ticket";
+    var puedeAnular = (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
+        && (Model.Estado == EstadoTicket.Creado || Model.Estado == EstadoTicket.Enviado);
 }
 
 <h1>Ticket @Model.NumeroTicket</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
 
 <dl class="row">
     <dt class="col-sm-3">Empleado</dt>
@@ -27,8 +35,35 @@
 
     <dt class="col-sm-3">Estado</dt>
     <dd class="col-sm-9"><strong>@Model.EstadoVisual</strong></dd>
+
+    @if (Model.Estado == EstadoTicket.Anulado)
+    {
+        <dt class="col-sm-3">Motivo de anulacion</dt>
+        <dd class="col-sm-9">@Model.MotivoAnulacion</dd>
+
+        <dt class="col-sm-3">Fecha de anulacion</dt>
+        <dd class="col-sm-9">@Model.FechaAnulacion?.ToString("g")</dd>
+    }
 </dl>
 
 <img src="@Url.Action("QrImagen", new { id = Model.Id })" alt="Codigo QR del ticket" style="max-width:250px" />
+<p class="mt-2"><a asp-action="DescargarPdf" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Descargar PDF</a></p>
+
+@if (puedeAnular)
+{
+    <hr />
+    <h5>Anular Ticket</h5>
+    <form asp-action="Anular" method="post" class="mt-2" style="max-width:500px">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <div class="mb-2">
+            <label for="motivo" class="form-label">Motivo de anulacion</label>
+            <textarea name="motivo" id="motivo" class="form-control" rows="2" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger"
+                onclick="return confirm('¿Seguro que deseas anular este ticket? Esta accion no se puede deshacer.');">
+            Anular Ticket
+        </button>
+    </form>
+}
 
 <p class="mt-3"><a asp-action="Index" class="btn btn-secondary">Volver</a></p>

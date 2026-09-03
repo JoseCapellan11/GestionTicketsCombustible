@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Inventario;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +49,9 @@ public class RecepcionesController : Controller
 
         try
         {
-            await _recepcionService.RegistrarAsync(dto);
+            var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+            await _recepcionService.RegistrarAsync(dto, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
             return RedirectToAction(nameof(Index));
         }
         catch (InvalidOperationException ex)

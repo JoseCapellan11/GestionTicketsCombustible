@@ -1,0 +1,90 @@
+@using GestionTicketsCombustible.Application.Reportes
+@model List<GestionTicketsCombustible.Application.Tickets.TicketDto>
+
+@{
+    ViewData["Title"] = "Reportes de Tickets";
+    var filtro = (ReporteTicketFiltroDto)ViewBag.Filtro;
+}
+
+<h1>Reportes de Tickets</h1>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-2">
+        <label class="form-label">Desde</label>
+        <input type="date" name="FechaDesde" class="form-control" value="@filtro.FechaDesde?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Hasta</label>
+        <input type="date" name="FechaHasta" class="form-control" value="@filtro.FechaHasta?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Empleado</label>
+        <select name="EmpleadoId" class="form-select" asp-items="ViewBag.Empleados">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Vehiculo</label>
+        <select name="VehiculoId" class="form-select" asp-items="ViewBag.Vehiculos">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Departamento</label>
+        <select name="DepartamentoId" class="form-select" asp-items="ViewBag.Departamentos">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Tipo Combustible</label>
+        <select name="TipoCombustible" class="form-select" asp-items="ViewBag.TiposCombustible">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="form-label">Estado</label>
+        <select name="Estado" class="form-select" asp-items="ViewBag.Estados">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-12 d-flex gap-2 mt-2">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <button type="submit" formaction="@Url.Action("ExportarExcel")" class="btn btn-success">Exportar a Excel</button>
+        <button type="submit" formaction="@Url.Action("ExportarCsv")" class="btn btn-outline-success">Exportar a CSV</button>
+        <button type="submit" formaction="@Url.Action("ExportarPdf")" class="btn btn-outline-danger">Exportar a PDF</button>
+    </div>
+</form>
+
+<p>@Model.Count resultado(s)</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Numero</th>
+            <th>Empleado</th>
+            <th>Vehiculo</th>
+            <th>Departamento</th>
+            <th>Cantidad</th>
+            <th>Tipo</th>
+            <th>Fecha creacion</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td>@t.NumeroTicket</td>
+                <td>@t.EmpleadoNombreSnapshot</td>
+                <td>@t.VehiculoPlacaSnapshot</td>
+                <td>@t.DepartamentoNombreSnapshot</td>
+                <td>@t.CantidadAutorizada</td>
+                <td>@t.TipoCombustible</td>
+                <td>@t.FechaCreacion.ToString("d")</td>
+                <td>@t.EstadoVisual</td>
+                <td><a asp-controller="Tickets" asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">Ver</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

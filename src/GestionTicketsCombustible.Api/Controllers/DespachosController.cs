@@ -24,7 +24,8 @@ public class DespachosController : ControllerBase
         try
         {
             var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var despachoId = await _despachoService.RegistrarAsync(dto, usuarioId);
+            var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+            var despachoId = await _despachoService.RegistrarAsync(dto, usuarioId, direccionIp);
             return Ok(new { id = despachoId });
         }
         catch (InvalidOperationException ex)

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Departamentos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,11 @@ public class DepartamentosController : Controller
             ModelState.AddModelError(nameof(nombre), "El nombre es obligatorio.");
             return View();
         }
-        await _departamentoService.CrearAsync(nombre);
+
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _departamentoService.CrearAsync(nombre, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -49,7 +54,11 @@ public class DepartamentosController : Controller
             ModelState.AddModelError(nameof(nombre), "El nombre es obligatorio.");
             return View(new DepartamentoDto { Id = id, Nombre = nombre });
         }
-        await _departamentoService.ActualizarAsync(id, nombre);
+
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _departamentoService.ActualizarAsync(id, nombre, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -57,7 +66,10 @@ public class DepartamentosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CambiarEstado(int id, bool activo)
     {
-        await _departamentoService.CambiarEstadoAsync(id, activo);
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _departamentoService.CambiarEstadoAsync(id, activo, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 }

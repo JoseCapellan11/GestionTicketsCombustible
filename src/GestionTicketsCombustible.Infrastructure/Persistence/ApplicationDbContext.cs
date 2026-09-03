@@ -30,4 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Tanque> Tanques { get; set; }
     public DbSet<MovimientoInventario> MovimientosInventario { get; set; }
     public DbSet<RecepcionCombustible> RecepcionesCombustible { get; set; }
+    public DbSet<AuditoriaLog> AuditoriaLogs { get; set; }
+    public DbSet<CierreDiario> CierresDiarios { get; set; }
+    public DbSet<CierreDiarioDetalle> CierreDiarioDetalles { get; set; }
 }

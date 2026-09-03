@@ -1,3 +1,4 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Despachos;
 using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Application.Tickets;
@@ -12,18 +13,21 @@ public class DespachoService : IDespachoService
     private readonly ApplicationDbContext _context;
     private readonly ITicketSeguridadService _seguridadService;
     private readonly IMovimientoInventarioService _movimientoService;
+    private readonly IAuditoriaService _auditoriaService;
 
     public DespachoService(
         ApplicationDbContext context,
         ITicketSeguridadService seguridadService,
-        IMovimientoInventarioService movimientoService)
+        IMovimientoInventarioService movimientoService,
+        IAuditoriaService auditoriaService)
     {
         _context = context;
         _seguridadService = seguridadService;
         _movimientoService = movimientoService;
+        _auditoriaService = auditoriaService;
     }
 
-    public async Task<int> RegistrarAsync(CrearDespachoDto dto, int usuarioDespachadorId)
+    public async Task<int> RegistrarAsync(CrearDespachoDto dto, int usuarioDespachadorId, string direccionIp)
     {
         var ticket = await _context.Tickets
             .Include(t => t.Despacho)
@@ -87,6 +91,16 @@ public class DespachoService : IDespachoService
             SubTipoMovimientoInventario.Despacho,
             $"Despacho #{despacho.Id} - Ticket {ticket.NumeroTicket}",
             despacho.Id);
+
+        var despachador = await _context.Users.FirstOrDefaultAsync(u => u.Id == usuarioDespachadorId);
+        await _auditoriaService.RegistrarAsync(
+            usuarioDespachadorId,
+            despachador?.UserName ?? "(desconocido)",
+            TipoAccionAuditoria.Despacho,
+            "Despacho",
+            despacho.Id,
+            $"Despacho de {dto.GalonesDespachados} galones para el ticket {ticket.NumeroTicket}",
+            direccionIp);
 
         return despacho.Id;
     }

@@ -14,8 +14,15 @@ using GestionTicketsCombustible.Application.Programaciones;
 using GestionTicketsCombustible.Infrastructure.BackgroundServices;
 using GestionTicketsCombustible.Application.Despachos;
 using GestionTicketsCombustible.Application.Inventario;
+using GestionTicketsCombustible.Application.Auditoria;
+using GestionTicketsCombustible.Application.CierresDiarios;
+using QuestPDF.Infrastructure;
+using GestionTicketsCombustible.Application.Reportes;
+using GestionTicketsCombustible.Application.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -37,6 +44,10 @@ builder.Services.Configure<AdminSeedOptions>(builder.Configuration.GetSection("A
 builder.Services.AddScoped<ITanqueService, TanqueService>();
 builder.Services.AddScoped<IMovimientoInventarioService, MovimientoInventarioService>();
 builder.Services.AddScoped<IRecepcionService, RecepcionService>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+builder.Services.AddScoped<ICierreDiarioService, CierreDiarioService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();

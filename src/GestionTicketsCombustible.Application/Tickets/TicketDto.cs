@@ -10,6 +10,10 @@ public class TicketDto
 
     public int SolicitudId { get; set; }
 
+    public int EmpleadoId { get; set; }
+    public int VehiculoId { get; set; }
+    public int DepartamentoId { get; set; }
+
     public string EmpleadoNombreSnapshot { get; set; } = string.Empty;
     public string VehiculoPlacaSnapshot { get; set; } = string.Empty;
     public string DepartamentoNombreSnapshot { get; set; } = string.Empty;
@@ -23,4 +27,7 @@ public class TicketDto
     public EstadoTicket Estado { get; set; }
     public string EstadoVisual { get; set; } = string.Empty;
     public bool? HashValido { get; set; }
+
+    public string? MotivoAnulacion { get; set; }
+    public DateTime? FechaAnulacion { get; set; }
 }

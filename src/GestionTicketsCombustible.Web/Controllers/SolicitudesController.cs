@@ -62,7 +62,10 @@ public class SolicitudesController : Controller
     [Authorize(Roles = Roles.Supervisor)]
     public async Task<IActionResult> Aprobar(int id)
     {
-        await _solicitudService.AprobarAsync(id);
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _solicitudService.AprobarAsync(id, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -71,7 +74,10 @@ public class SolicitudesController : Controller
     [Authorize(Roles = Roles.Supervisor)]
     public async Task<IActionResult> Rechazar(int id)
     {
-        await _solicitudService.RechazarAsync(id);
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _solicitudService.RechazarAsync(id, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 

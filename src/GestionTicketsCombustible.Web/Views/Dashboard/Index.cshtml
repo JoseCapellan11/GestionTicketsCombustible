@@ -1,0 +1,93 @@
+@model GestionTicketsCombustible.Application.Dashboard.DashboardDto
+
+@{
+    ViewData["Title"] = "Dashboard Ejecutivo";
+    var maxDepartamento = Model.ConsumoPorDepartamento.Any() ? Model.ConsumoPorDepartamento.Max(x => x.TotalGalones) : 0;
+    var maxVehiculo = Model.ConsumoPorVehiculo.Any() ? Model.ConsumoPorVehiculo.Max(x => x.TotalGalones) : 0;
+}
+
+<h1>Dashboard Ejecutivo</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">Inventario Actual</h6>
+                <p class="card-text fs-3">@Model.InventarioActualTotal.ToString("N2") gal</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-title">Combustible Despachado (histórico)</h6>
+                <p class="card-text fs-3">@Model.CombustibleDespachadoTotal.ToString("N2") gal</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <h6 class="card-title">Tickets Activos</h6>
+                <p class="card-text fs-3">@Model.TicketsActivos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-danger">
+            <div class="card-body">
+                <h6 class="card-title">Tickets Vencidos</h6>
+                <p class="card-text fs-3">@Model.TicketsVencidos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <h5>Consumo por Departamento</h5>
+        @if (!Model.ConsumoPorDepartamento.Any())
+        {
+            <p class="text-muted">No hay despachos registrados todavía.</p>
+        }
+        else
+        {
+            foreach (var item in Model.ConsumoPorDepartamento)
+            {
+                var porcentaje = maxDepartamento > 0 ? (item.TotalGalones / maxDepartamento) * 100 : 0;
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>@item.Nombre</span>
+                        <span>@item.TotalGalones.ToString("N2") gal</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: @porcentaje.ToString("F0")%"></div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="col-md-6">
+        <h5>Consumo por Vehículo</h5>
+        @if (!Model.ConsumoPorVehiculo.Any())
+        {
+            <p class="text-muted">No hay despachos registrados todavía.</p>
+        }
+        else
+        {
+            foreach (var item in Model.ConsumoPorVehiculo)
+            {
+                var porcentaje = maxVehiculo > 0 ? (item.TotalGalones / maxVehiculo) * 100 : 0;
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>@item.Nombre</span>
+                        <span>@item.TotalGalones.ToString("N2") gal</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: @porcentaje.ToString("F0")%"></div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

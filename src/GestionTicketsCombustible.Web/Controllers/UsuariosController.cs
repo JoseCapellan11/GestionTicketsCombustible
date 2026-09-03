@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Usuarios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -34,7 +35,10 @@ public class UsuariosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CrearUsuarioDto dto)
     {
-        var (exito, errores) = await _usuarioService.CrearAsync(dto);
+        var actorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        var (exito, errores) = await _usuarioService.CrearAsync(dto, actorId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         if (!exito)
         {
             foreach (var error in errores)
@@ -59,7 +63,10 @@ public class UsuariosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditarUsuarioDto dto)
     {
-        await _usuarioService.ActualizarAsync(dto);
+        var actorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _usuarioService.ActualizarAsync(dto, actorId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -67,7 +74,10 @@ public class UsuariosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CambiarEstado(int id, bool activo)
     {
-        await _usuarioService.CambiarEstadoAsync(id, activo);
+        var actorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _usuarioService.CambiarEstadoAsync(id, activo, actorId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -81,7 +91,10 @@ public class UsuariosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResetPassword(int id, string nuevaPassword)
     {
-        var (exito, errores) = await _usuarioService.RestablecerPasswordAsync(id, nuevaPassword);
+        var actorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        var (exito, errores) = await _usuarioService.RestablecerPasswordAsync(id, nuevaPassword, actorId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         if (!exito)
         {
             foreach (var error in errores)

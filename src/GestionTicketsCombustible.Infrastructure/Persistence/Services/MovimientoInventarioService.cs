@@ -1,3 +1,4 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Domain.Entities;
 using GestionTicketsCombustible.Domain.Enums;
@@ -8,10 +9,12 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Services;
 public class MovimientoInventarioService : IMovimientoInventarioService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public MovimientoInventarioService(ApplicationDbContext context)
+    public MovimientoInventarioService(ApplicationDbContext context, IAuditoriaService auditoriaService)
     {
         _context = context;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IEnumerable<MovimientoInventarioDto>> ObtenerHistorialAsync()
@@ -47,14 +50,21 @@ public class MovimientoInventarioService : IMovimientoInventarioService
         await AplicarMovimientoAsync(tanqueId, volumen, TipoMovimientoInventario.Salida, subTipo, referencia, despachoId: despachoId);
     }
 
-    public async Task RegistrarAjusteAsync(CrearAjusteInventarioDto dto)
+    public async Task RegistrarAjusteAsync(CrearAjusteInventarioDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var subTipo = dto.EsPositivo ? SubTipoMovimientoInventario.AjustePositivo : SubTipoMovimientoInventario.AjusteNegativo;
 
-        await AplicarMovimientoAsync(dto.TanqueId, dto.Volumen, TipoMovimientoInventario.Ajuste, subTipo, dto.Referencia, esNegativo: !dto.EsPositivo);
+        var movimientoId = await AplicarMovimientoAsync(
+            dto.TanqueId, dto.Volumen, TipoMovimientoInventario.Ajuste, subTipo, dto.Referencia, esNegativo: !dto.EsPositivo);
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Ajuste,
+            "MovimientoInventario", movimientoId,
+            $"Ajuste {(dto.EsPositivo ? "positivo" : "negativo")} de {dto.Volumen} galones en tanque #{dto.TanqueId}: {dto.Referencia}",
+            direccionIp);
     }
 
-    public async Task RegistrarTransferenciaAsync(CrearTransferenciaInventarioDto dto)
+    public async Task RegistrarTransferenciaAsync(CrearTransferenciaInventarioDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         if (dto.TanqueOrigenId == dto.TanqueDestinoId)
             throw new InvalidOperationException("El tanque de origen y destino no pueden ser el mismo.");
@@ -95,9 +105,15 @@ public class MovimientoInventarioService : IMovimientoInventarioService
 
         await _context.SaveChangesAsync();
         await transaccion.CommitAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Ajuste,
+            "MovimientoInventario", movimiento.Id,
+            $"Transferencia de {dto.Volumen} galones del tanque #{dto.TanqueOrigenId} al tanque #{dto.TanqueDestinoId}",
+            direccionIp);
     }
 
-    private async Task AplicarMovimientoAsync(
+    private async Task<int> AplicarMovimientoAsync(
         int tanqueId,
         decimal volumen,
         TipoMovimientoInventario tipo,
@@ -140,6 +156,8 @@ public class MovimientoInventarioService : IMovimientoInventarioService
 
         await _context.SaveChangesAsync();
         await transaccion.CommitAsync();
+
+        return movimiento.Id;
     }
 
     private static MovimientoInventarioDto MapToDto(MovimientoInventario m) => new()

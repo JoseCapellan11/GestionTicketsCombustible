@@ -1,4 +1,6 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Usuarios;
+using GestionTicketsCombustible.Domain.Enums;
 using GestionTicketsCombustible.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +11,13 @@ public class UsuarioService : IUsuarioService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public UsuarioService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    public UsuarioService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IAuditoriaService auditoriaService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<List<UsuarioDto>> ObtenerTodosAsync()
@@ -54,7 +58,7 @@ public class UsuarioService : IUsuarioService
         };
     }
 
-    public async Task<(bool Exito, string[] Errores)> CrearAsync(CrearUsuarioDto dto)
+    public async Task<(bool Exito, string[] Errores)> CrearAsync(CrearUsuarioDto dto, int actorId, string actorNombreUsuario, string direccionIp)
     {
         var usuario = new ApplicationUser
         {
@@ -71,10 +75,17 @@ public class UsuarioService : IUsuarioService
         }
 
         await _userManager.AddToRoleAsync(usuario, dto.Rol);
+
+        await _auditoriaService.RegistrarAsync(
+            actorId, actorNombreUsuario, TipoAccionAuditoria.Creacion,
+            "Usuario", usuario.Id,
+            $"Creacion del usuario '{dto.UserName}' con rol '{dto.Rol}'",
+            direccionIp);
+
         return (true, Array.Empty<string>());
     }
 
-    public async Task ActualizarAsync(EditarUsuarioDto dto)
+    public async Task ActualizarAsync(EditarUsuarioDto dto, int actorId, string actorNombreUsuario, string direccionIp)
     {
         var usuario = await _userManager.FindByIdAsync(dto.Id.ToString())
             ?? throw new KeyNotFoundException($"Usuario {dto.Id} no encontrado.");
@@ -90,14 +101,26 @@ public class UsuarioService : IUsuarioService
             await _userManager.RemoveFromRolesAsync(usuario, rolesActuales);
             await _userManager.AddToRoleAsync(usuario, dto.Rol);
         }
+
+        await _auditoriaService.RegistrarAsync(
+            actorId, actorNombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Usuario", usuario.Id,
+            $"Actualizacion de datos del usuario '{usuario.UserName}' (rol: '{dto.Rol}')",
+            direccionIp);
     }
 
-    public async Task CambiarEstadoAsync(int id, bool activo)
+    public async Task CambiarEstadoAsync(int id, bool activo, int actorId, string actorNombreUsuario, string direccionIp)
     {
         var usuario = await _userManager.FindByIdAsync(id.ToString())
             ?? throw new KeyNotFoundException($"Usuario {id} no encontrado.");
 
         await _userManager.SetLockoutEndDateAsync(usuario, activo ? null : DateTimeOffset.MaxValue);
+
+        await _auditoriaService.RegistrarAsync(
+            actorId, actorNombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Usuario", usuario.Id,
+            $"Usuario '{usuario.UserName}' {(activo ? "activado" : "desactivado")}",
+            direccionIp);
     }
 
     public async Task<List<string>> ObtenerRolesDisponiblesAsync()
@@ -105,19 +128,25 @@ public class UsuarioService : IUsuarioService
         return await _roleManager.Roles.Select(r => r.Name!).ToListAsync();
     }
 
-    public async Task<(bool Exito, string[] Errores)> RestablecerPasswordAsync(int id, string nuevaPassword)
-{
-    var usuario = await _userManager.FindByIdAsync(id.ToString())
-        ?? throw new KeyNotFoundException($"Usuario {id} no encontrado.");
-
-    var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
-    var resultado = await _userManager.ResetPasswordAsync(usuario, token, nuevaPassword);
-
-    if (!resultado.Succeeded)
+    public async Task<(bool Exito, string[] Errores)> RestablecerPasswordAsync(int id, string nuevaPassword, int actorId, string actorNombreUsuario, string direccionIp)
     {
-        return (false, resultado.Errors.Select(e => e.Description).ToArray());
-    }
+        var usuario = await _userManager.FindByIdAsync(id.ToString())
+            ?? throw new KeyNotFoundException($"Usuario {id} no encontrado.");
 
-    return (true, Array.Empty<string>());
-}
+        var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+        var resultado = await _userManager.ResetPasswordAsync(usuario, token, nuevaPassword);
+
+        if (!resultado.Succeeded)
+        {
+            return (false, resultado.Errors.Select(e => e.Description).ToArray());
+        }
+
+        await _auditoriaService.RegistrarAsync(
+            actorId, actorNombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Usuario", usuario.Id,
+            $"Restablecimiento de contrasena del usuario '{usuario.UserName}'",
+            direccionIp);
+
+        return (true, Array.Empty<string>());
+    }
 }

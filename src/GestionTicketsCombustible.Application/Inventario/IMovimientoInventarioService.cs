@@ -9,6 +9,6 @@ public interface IMovimientoInventarioService
 
     Task RegistrarEntradaAsync(int tanqueId, decimal volumen, SubTipoMovimientoInventario subTipo, string? referencia, int? recepcionId = null);
     Task RegistrarSalidaAsync(int tanqueId, decimal volumen, SubTipoMovimientoInventario subTipo, string? referencia, int? despachoId = null);
-    Task RegistrarAjusteAsync(CrearAjusteInventarioDto dto);
-    Task RegistrarTransferenciaAsync(CrearTransferenciaInventarioDto dto);
+    Task RegistrarAjusteAsync(CrearAjusteInventarioDto dto, int usuarioId, string nombreUsuario, string direccionIp);
+    Task RegistrarTransferenciaAsync(CrearTransferenciaInventarioDto dto, int usuarioId, string nombreUsuario, string direccionIp);
 }

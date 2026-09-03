@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Departamentos;
 using GestionTicketsCombustible.Application.Empleados;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,11 @@ public class EmpleadosController : Controller
             await CargarDepartamentosAsync(dto.DepartamentoId);
             return View(dto);
         }
-        await _empleadoService.CrearAsync(dto);
+
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _empleadoService.CrearAsync(dto, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -64,7 +69,11 @@ public class EmpleadosController : Controller
             await CargarDepartamentosAsync(dto.DepartamentoId);
             return View(dto);
         }
-        await _empleadoService.ActualizarAsync(dto);
+
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _empleadoService.ActualizarAsync(dto, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 
@@ -72,7 +81,10 @@ public class EmpleadosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CambiarEstado(int id, bool activo)
     {
-        await _empleadoService.CambiarEstadoAsync(id, activo);
+        var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        await _empleadoService.CambiarEstadoAsync(id, activo, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
         return RedirectToAction(nameof(Index));
     }
 }

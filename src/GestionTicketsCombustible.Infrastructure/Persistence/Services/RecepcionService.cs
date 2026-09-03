@@ -1,3 +1,4 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Domain.Entities;
 using GestionTicketsCombustible.Domain.Enums;
@@ -9,14 +10,16 @@ public class RecepcionService : IRecepcionService
 {
     private readonly ApplicationDbContext _context;
     private readonly IMovimientoInventarioService _movimientoService;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public RecepcionService(ApplicationDbContext context, IMovimientoInventarioService movimientoService)
+    public RecepcionService(ApplicationDbContext context, IMovimientoInventarioService movimientoService, IAuditoriaService auditoriaService)
     {
         _context = context;
         _movimientoService = movimientoService;
+        _auditoriaService = auditoriaService;
     }
 
-    public async Task<int> RegistrarAsync(CrearRecepcionCombustibleDto dto)
+    public async Task<int> RegistrarAsync(CrearRecepcionCombustibleDto dto, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var tanque = await _context.Tanques.FirstOrDefaultAsync(t => t.Id == dto.TanqueId)
             ?? throw new InvalidOperationException("El tanque no existe.");
@@ -41,6 +44,12 @@ public class RecepcionService : IRecepcionService
             SubTipoMovimientoInventario.RecepcionCombustible,
             referencia,
             recepcionId: recepcion.Id);
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Creacion,
+            "RecepcionCombustible", recepcion.Id,
+            $"Recepcion de {dto.VolumenRecibido} galones (Factura {dto.Factura}, Suplidor {dto.NombreSuplidor}) en tanque #{dto.TanqueId}",
+            direccionIp);
 
         return recepcion.Id;
     }

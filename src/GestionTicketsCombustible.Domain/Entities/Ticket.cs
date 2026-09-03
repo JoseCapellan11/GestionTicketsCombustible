@@ -36,6 +36,10 @@ public class Ticket
 
     public EstadoTicket Estado { get; set; } = EstadoTicket.Creado;
 
+    // RF-21: motivo y fecha de anulación (decisión de diseño, no especificada explícitamente en el SRS)
+    public string? MotivoAnulacion { get; set; }
+    public DateTime? FechaAnulacion { get; set; }
+
     // RF-07 / RS-04: seguridad del QR (se calculan en la Fase 2.5)
     public string HashSeguridad { get; set; } = string.Empty;
     public string TokenValidacion { get; set; } = string.Empty;

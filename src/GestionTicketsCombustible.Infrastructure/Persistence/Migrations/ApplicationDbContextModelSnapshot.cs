@@ -22,6 +22,135 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.AuditoriaLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DireccionIp")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("Entidad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("EntidadId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NombreUsuarioSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("TipoAccion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FechaHora");
+
+                    b.HasIndex("TipoAccion");
+
+                    b.ToTable("AuditoriaLogs");
+                });
+
+            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.CierreDiario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaHoraCierre")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal>("TotalDespachadoDia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalRecibidoDia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UsuarioCierreId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsuarioCierreNombreSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Fecha")
+                        .IsUnique();
+
+                    b.ToTable("CierresDiarios");
+                });
+
+            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.CierreDiarioDetalle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CierreDiarioId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DespachadoDia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Diferencia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ExistenciaFisica")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ExistenciaTeorica")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("RecibidoDia")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TanqueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CierreDiarioId");
+
+                    b.HasIndex("TanqueId");
+
+                    b.ToTable("CierreDiarioDetalles");
+                });
+
             modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.Departamento", b =>
                 {
                     b.Property<int>("Id")
@@ -440,6 +569,9 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<DateTime?>("FechaAnulacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
@@ -450,6 +582,9 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("MotivoAnulacion")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumeroTicket")
                         .IsRequired()
@@ -765,6 +900,25 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.CierreDiarioDetalle", b =>
+                {
+                    b.HasOne("GestionTicketsCombustible.Domain.Entities.CierreDiario", "CierreDiario")
+                        .WithMany("Detalles")
+                        .HasForeignKey("CierreDiarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestionTicketsCombustible.Domain.Entities.Tanque", "Tanque")
+                        .WithMany()
+                        .HasForeignKey("TanqueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CierreDiario");
+
+                    b.Navigation("Tanque");
+                });
+
             modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.Despacho", b =>
                 {
                     b.HasOne("GestionTicketsCombustible.Domain.Entities.Tanque", "Tanque")
@@ -998,6 +1152,11 @@ namespace GestionTicketsCombustible.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.CierreDiario", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("GestionTicketsCombustible.Domain.Entities.Departamento", b =>

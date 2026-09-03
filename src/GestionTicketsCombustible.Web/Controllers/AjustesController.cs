@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using GestionTicketsCombustible.Application.Inventario;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,9 @@ public class AjustesController : Controller
 
         try
         {
-            await _movimientoService.RegistrarAjusteAsync(dto);
+            var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var direccionIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+            await _movimientoService.RegistrarAjusteAsync(dto, usuarioId, User.Identity?.Name ?? "(desconocido)", direccionIp);
             return RedirectToAction("Index", "Inventario");
         }
         catch (InvalidOperationException ex)

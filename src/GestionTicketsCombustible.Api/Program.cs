@@ -11,6 +11,7 @@ using GestionTicketsCombustible.Application.Common;
 using GestionTicketsCombustible.Application.Despachos;
 using GestionTicketsCombustible.Application.Tickets;
 using GestionTicketsCombustible.Application.Inventario;
+using GestionTicketsCombustible.Application.Auditoria;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +74,7 @@ builder.Services.AddScoped<IDespachoService, DespachoService>();
 builder.Services.AddScoped<ITanqueService, TanqueService>();
 builder.Services.AddScoped<IMovimientoInventarioService, MovimientoInventarioService>();
 builder.Services.AddScoped<IRecepcionService, RecepcionService>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<ITokenService, TokenService>();

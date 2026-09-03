@@ -1,3 +1,4 @@
+using GestionTicketsCombustible.Application.Auditoria;
 using GestionTicketsCombustible.Application.Solicitudes;
 using GestionTicketsCombustible.Application.Tickets;
 using GestionTicketsCombustible.Domain.Entities;
@@ -10,11 +11,13 @@ public class SolicitudService : ISolicitudService
 {
     private readonly ApplicationDbContext _context;
     private readonly ITicketService _ticketService;
+    private readonly IAuditoriaService _auditoriaService;
 
-    public SolicitudService(ApplicationDbContext context, ITicketService ticketService)
+    public SolicitudService(ApplicationDbContext context, ITicketService ticketService, IAuditoriaService auditoriaService)
     {
         _context = context;
         _ticketService = ticketService;
+        _auditoriaService = auditoriaService;
     }
 
     public async Task<IEnumerable<SolicitudDto>> ObtenerTodasAsync()
@@ -62,7 +65,7 @@ public class SolicitudService : ISolicitudService
         return solicitud.Id;
     }
 
-    public async Task AprobarAsync(int id)
+    public async Task AprobarAsync(int id, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var solicitud = await _context.Solicitudes.FindAsync(id)
             ?? throw new InvalidOperationException("La solicitud no existe.");
@@ -73,10 +76,16 @@ public class SolicitudService : ISolicitudService
         solicitud.Estado = EstadoSolicitud.Aprobada;
         await _context.SaveChangesAsync();
 
-        await _ticketService.GenerarDesdeSolicitudAsync(id);
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Solicitud", solicitud.Id,
+            $"Solicitud #{solicitud.Id} aprobada",
+            direccionIp);
+
+        await _ticketService.GenerarDesdeSolicitudAsync(id, usuarioId, nombreUsuario, direccionIp);
     }
 
-    public async Task RechazarAsync(int id)
+    public async Task RechazarAsync(int id, int usuarioId, string nombreUsuario, string direccionIp)
     {
         var solicitud = await _context.Solicitudes.FindAsync(id)
             ?? throw new InvalidOperationException("La solicitud no existe.");
@@ -86,6 +95,12 @@ public class SolicitudService : ISolicitudService
 
         solicitud.Estado = EstadoSolicitud.Rechazada;
         await _context.SaveChangesAsync();
+
+        await _auditoriaService.RegistrarAsync(
+            usuarioId, nombreUsuario, TipoAccionAuditoria.Modificacion,
+            "Solicitud", solicitud.Id,
+            $"Solicitud #{solicitud.Id} rechazada",
+            direccionIp);
     }
 
     private static SolicitudDto MapToDto(Solicitud s) => new()
