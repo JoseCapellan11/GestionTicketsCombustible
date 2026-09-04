@@ -12,6 +12,7 @@ using GestionTicketsCombustible.Application.Despachos;
 using GestionTicketsCombustible.Application.Tickets;
 using GestionTicketsCombustible.Application.Inventario;
 using GestionTicketsCombustible.Application.Auditoria;
+using GestionTicketsCombustible.Application.Notificaciones;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +69,7 @@ builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp")
 
 builder.Services.AddScoped<ITicketSeguridadService, TicketSeguridadService>();
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IDespachoService, DespachoService>();
