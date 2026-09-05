@@ -1,8 +1,125 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    var rolesUsuario = User.Claims.Where(c => c.Type == System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="mb-4">
+    <h1 class="h3 mb-1">Bienvenido, @User.Identity?.Name</h1>
+    @if (rolesUsuario.Any())
+    {
+        <p class="text-muted mb-0">Rol: @string.Join(", ", rolesUsuario)</p>
+    }
+</div>
+
+<div class="row g-3">
+
+    @if (User.IsInRole("Solicitante"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Nueva Solicitud</h5>
+                    <p class="card-text text-muted">Solicita combustible para un vehículo o departamento.</p>
+                    <a asp-controller="Solicitudes" asp-action="Create" class="btn btn-primary">Crear Solicitud</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitudes</h5>
+                    <p class="card-text text-muted">Consulta el estado de las solicitudes registradas.</p>
+                    <a asp-controller="Solicitudes" asp-action="Index" class="btn btn-outline-primary">Ver Solicitudes</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitudes</h5>
+                    <p class="card-text text-muted">Revisa, aprueba o rechaza solicitudes de combustible.</p>
+                    <a asp-controller="Solicitudes" asp-action="Index" class="btn btn-primary">Ver Solicitudes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tickets</h5>
+                    <p class="card-text text-muted">Consulta los tickets digitales emitidos.</p>
+                    <a asp-controller="Tickets" asp-action="Index" class="btn btn-primary">Ver Tickets</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Dashboard</h5>
+                    <p class="card-text text-muted">Indicadores generales de inventario y despacho.</p>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary">Ver Dashboard</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Auditor"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Auditoría</h5>
+                    <p class="card-text text-muted">Revisa el historial de acciones del sistema.</p>
+                    <a asp-controller="Auditoria" asp-action="Index" class="btn btn-primary">Ver Auditoría</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Reportes</h5>
+                    <p class="card-text text-muted">Genera reportes de consumo e inventario.</p>
+                    <a asp-controller="Reportes" asp-action="Index" class="btn btn-outline-primary">Ver Reportes</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Consulta"))
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Solicitudes</h5>
+                    <p class="card-text text-muted">Consulta el estado de las solicitudes registradas (solo lectura).</p>
+                    <a asp-controller="Solicitudes" asp-action="Index" class="btn btn-outline-primary">Ver Solicitudes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Tickets</h5>
+                    <p class="card-text text-muted">Consulta los tickets digitales emitidos (solo lectura).</p>
+                    <a asp-controller="Tickets" asp-action="Index" class="btn btn-outline-primary">Ver Tickets</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!User.IsInRole("Solicitante") && !User.IsInRole("Administrador") && !User.IsInRole("Supervisor") && !User.IsInRole("Auditor") && !User.IsInRole("Consulta"))
+    {
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Bienvenido al sistema</h5>
+                    <p class="card-text text-muted mb-0">Usa el menú lateral para navegar por las secciones disponibles para tu rol.</p>
+                </div>
+            </div>
+        </div>
+    }
+
 </div>

@@ -4,107 +4,154 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GestionTicketsCombustible.Web</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GestionTicketsCombustible.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GestionTicketsCombustible.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Inventario" asp-action="Index">Inventario</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Tanques" asp-action="Index">Tanques</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Recepciones" asp-action="Index">Recepciones</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Ajustes" asp-action="Create">Ajustes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Transferencias" asp-action="Create">Transferencias</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
-                            </li>
-                        }
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        var currentController = (ViewContext.RouteData.Values["controller"]?.ToString() ?? "").ToLower();
+        var currentAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLower();
+        Func<string, bool> isActive = ctrl => currentController == ctrl.ToLower();
+        Func<string, string, bool> isActiveExact = (ctrl, action) => currentController == ctrl.ToLower() && currentAction == action.ToLower();
+
+        <div class="app-shell">
+            <aside class="sidebar" id="appSidebar">
+                <div class="sidebar-brand">
+                    <div class="brand-icon">GC</div>
+                    <span class="brand-text">Gestión Tickets Combustible</span>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <a class="side-link @(isActiveExact("Home", "Index") ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
+                    {
+                        <div class="side-section-label">Datos Maestros</div>
+                        <a class="side-link @(isActive("Departamentos") ? "active" : "")" asp-controller="Departamentos" asp-action="Index">Departamentos</a>
+                        <a class="side-link @(isActive("Empleados") ? "active" : "")" asp-controller="Empleados" asp-action="Index">Empleados</a>
+                        <a class="side-link @(isActive("Vehiculos") ? "active" : "")" asp-controller="Vehiculos" asp-action="Index">Vehículos</a>
+                    }
+
+                    @if (User.IsInRole("Solicitante"))
+                    {
+                        <div class="side-section-label">Solicitudes</div>
+                        <a class="side-link @(isActiveExact("Solicitudes", "Create") ? "active" : "")" asp-controller="Solicitudes" asp-action="Create">Nueva Solicitud</a>
+                        <a class="side-link @(isActiveExact("Solicitudes", "Index") ? "active" : "")" asp-controller="Solicitudes" asp-action="Index">Solicitudes</a>
+                    }
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor") || User.IsInRole("Consulta"))
+                    {
+                        <div class="side-section-label">Solicitudes y Tickets</div>
+                        <a class="side-link @(isActiveExact("Solicitudes", "Index") ? "active" : "")" asp-controller="Solicitudes" asp-action="Index">Solicitudes</a>
+                        <a class="side-link @(isActiveExact("Tickets", "Index") ? "active" : "")" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                    }
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor"))
+                    {
+                        <div class="side-section-label">Inventario</div>
+                        <a class="side-link @(isActive("Inventario") ? "active" : "")" asp-controller="Inventario" asp-action="Index">Inventario</a>
+                        <a class="side-link @(isActive("Tanques") ? "active" : "")" asp-controller="Tanques" asp-action="Index">Tanques</a>
+                        <a class="side-link @(isActive("Recepciones") ? "active" : "")" asp-controller="Recepciones" asp-action="Index">Recepciones</a>
+                        <a class="side-link @(isActive("Ajustes") ? "active" : "")" asp-controller="Ajustes" asp-action="Create">Ajustes</a>
+                        <a class="side-link @(isActive("Transferencias") ? "active" : "")" asp-controller="Transferencias" asp-action="Create">Transferencias</a>
+                        <a class="side-link @(isActive("Movimientos") ? "active" : "")" asp-controller="Movimientos" asp-action="Index">Movimientos</a>
+                    }
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor") || User.IsInRole("Auditor"))
+                    {
+                        <div class="side-section-label">Gestión</div>
+                        <a class="side-link @(isActive("CierresDiarios") ? "active" : "")" asp-controller="CierresDiarios" asp-action="Index">Cierres Diarios</a>
+                        <a class="side-link @(isActive("Reportes") ? "active" : "")" asp-controller="Reportes" asp-action="Index">Reportes</a>
+                        <a class="side-link @(isActive("Dashboard") ? "active" : "")" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                    }
+
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <div class="side-section-label">Administración</div>
+                        <a class="side-link @(isActive("Usuarios") ? "active" : "")" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+                    }
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Auditor"))
+                    {
+                        <div class="side-section-label">Control</div>
+                        <a class="side-link @(isActive("Auditoria") ? "active" : "")" asp-controller="Auditoria" asp-action="Index">Auditoria</a>
+                    }
+                </nav>
+
+                <div class="sidebar-footer">
+                    <span class="status-dot"></span> Sistema en línea
+                </div>
+            </aside>
+
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+            <div class="main-area">
+                <header class="topbar">
+                    <div class="topbar-left">
+                        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" type="button" aria-label="Abrir menú">
+                            <span></span><span></span><span></span>
+                        </button>
+                        <div class="topbar-title">@ViewData["Title"]</div>
+                    </div>
+                    <div class="topbar-actions">
                         @if (User.IsInRole("Administrador") || User.IsInRole("Supervisor") || User.IsInRole("Auditor"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="CierresDiarios" asp-action="Index">Cierres Diarios</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Reportes" asp-action="Index">Reportes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
+                            <div class="topbar-bell">
                                 @await Component.InvokeAsync("NotificacionesCampana")
-                            </li>
+                            </div>
                         }
-                        @if (User.IsInRole("Administrador") || User.IsInRole("Auditor"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auditoria" asp-action="Index">Auditoria</a>
-                            </li>
-                        }
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">Hola, @User.Identity.Name</span>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-controller="Account" asp-action="Logout" method="post">
-                                    <button type="submit" class="nav-link btn btn-link">Cerrar sesion</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Iniciar sesion</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+                        <span class="topbar-user">Hola, @User.Identity.Name</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit" class="btn-logout">Cerrar sesion</button>
+                        </form>
+                    </div>
+                </header>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - GestionTicketsCombustible.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <main role="main" class="content-area">
+                    @RenderBody()
+                </main>
+
+                <footer class="app-footer">
+                    &copy; 2026 - GestionTicketsCombustible.Web
+                </footer>
+            </div>
         </div>
-    </footer>
+    }
+    else
+    {
+        <div class="auth-shell">
+            <main class="auth-content" role="main">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggleBtn = document.getElementById('sidebarToggleBtn');
+            var sidebar = document.getElementById('appSidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('open');
+            }
+            if (toggleBtn && sidebar && overlay) {
+                toggleBtn.addEventListener('click', function () {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('open');
+                });
+                overlay.addEventListener('click', closeSidebar);
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

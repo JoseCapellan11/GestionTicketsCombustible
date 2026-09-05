@@ -1,64 +1,226 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+}
+
+:root {
+  --gtc-bg: #f3f6f8;
+  --gtc-card-bg: #ffffff;
+  --gtc-border: #e3e8ee;
+  --gtc-text: #1f2933;
+  --gtc-text-muted: #6b7785;
+
+  --gtc-accent: #2dd4bf;
+  --gtc-accent-dark: #14b8a6;
+
+  --gtc-danger: #ef4444;
+  --gtc-success: #22c55e;
+
+  --gtc-radius: 14px;
+  --gtc-shadow: 0 1px 2px rgba(16, 24, 32, 0.04), 0 8px 24px rgba(16, 24, 32, 0.08);
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
   margin: 0;
-  background-color: #f5f5f5;
+  font-family: 'Manrope', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--gtc-text);
+  min-height: 100vh;
+}
+
+body.pwa-auth {
+  background: linear-gradient(180deg, #131b24 0%, #1a232e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+body.pwa-app {
+  background: var(--gtc-bg);
 }
 
 .contenedor-login,
 .contenedor-despacho {
   max-width: 420px;
   margin: 40px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 28px;
+  background: var(--gtc-card-bg);
+  border-radius: var(--gtc-radius);
+  box-shadow: var(--gtc-shadow);
+}
+
+.pwa-auth .contenedor-login {
+  margin: 0;
+  width: 100%;
+}
+
+.marca-app {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.marca-icono {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--gtc-accent);
+  color: #0b1119;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.contenedor-login h1 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--gtc-text);
+}
+
+.contenedor-login h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 2px 0 0;
+  color: var(--gtc-text-muted);
+}
+
+label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gtc-text-muted);
+  margin-top: 6px;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 input, button, select, textarea {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 11px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--gtc-border);
   width: 100%;
 }
 
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gtc-accent);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+}
+
 button {
-  background-color: #0d6efd;
-  color: white;
+  background-color: var(--gtc-accent-dark);
+  color: #ffffff;
   border: none;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 12px;
+  margin-top: 14px;
+  transition: background-color .15s ease;
+}
+
+button:hover {
+  background-color: var(--gtc-accent);
+  color: #0b1119;
 }
 
 .mensaje-error {
-  color: #d32f2f;
-  font-weight: bold;
+  color: var(--gtc-danger);
+  font-weight: 700;
+  font-size: 13.5px;
 }
 
 .mensaje-exito {
-  color: #198754;
-  font-weight: bold;
+  color: var(--gtc-success);
+  font-weight: 700;
+  font-size: 13.5px;
 }
 
 .cabecera-despacho {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gtc-border);
+}
+
+.cabecera-despacho h1 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .cabecera-despacho button {
   width: auto;
   margin-top: 0;
-  background-color: #6c757d;
+  background-color: transparent;
+  color: var(--gtc-text-muted);
+  border: 1px solid var(--gtc-border);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 12px;
+}
+
+.cabecera-despacho button:hover {
+  border-color: var(--gtc-accent);
+  color: var(--gtc-accent-dark);
+  background-color: transparent;
+}
+
+#seccion-ticket h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+#detalle-ticket {
+  background: var(--gtc-bg);
+  border: 1px solid var(--gtc-border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#detalle-ticket strong,
+#detalle-ticket b {
+  color: var(--gtc-text);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+#lector-qr {
+  margin-top: 14px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#boton-escanear-otro {
+  width: 100%;
+  background-color: transparent;
+  color: var(--gtc-accent-dark);
+  border: 1px solid var(--gtc-accent-dark);
+  margin-top: 10px;
+}
+
+#boton-escanear-otro:hover {
+  background-color: var(--gtc-accent-dark);
+  color: #ffffff;
+}
+
+#mensaje-resultado {
+  font-weight: 700;
+  font-size: 14px;
 }
