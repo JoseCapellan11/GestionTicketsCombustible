@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://localhost:7262";
+const API_BASE_URL = "http://localhost:7262";
 
 function obtenerToken() {
   return localStorage.getItem("jwt");

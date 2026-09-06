@@ -1,4 +1,4 @@
-const CACHE_NAME = "gestion-combustible-pwa-v5";
+const CACHE_NAME = "gestion-combustible-pwa-v6";
 const ARCHIVOS_APP_SHELL = [
   "/",
   "/index.html",
