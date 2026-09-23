@@ -66,6 +66,10 @@ public class DespachoService : IDespachoService
         if (!tanque.Activo)
             throw new InvalidOperationException("El tanque indicado no esta activo.");
 
+        if (!string.Equals(tanque.TipoCombustible.Trim(), ticket.TipoCombustible.Trim(), StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(
+                $"El tanque seleccionado es de '{tanque.TipoCombustible}', pero el ticket autoriza '{ticket.TipoCombustible}'. Selecciona un tanque del tipo correcto.");
+
         if (tanque.ExistenciaActual < dto.GalonesDespachados)
             throw new InvalidOperationException("El tanque no tiene existencia suficiente para este despacho.");
 
